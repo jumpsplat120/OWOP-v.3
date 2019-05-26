@@ -41,7 +41,7 @@ function game.load()
 	
 	game.hoverTimer = 4.5
 	game.state = "START_MENU"
-	game.startMenu.update()
+	game.resize.update()
 end
 
 function game.ui.draw()

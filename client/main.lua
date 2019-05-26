@@ -58,13 +58,13 @@ function love.mousereleased(x, y, button)
 	if game.state == "START_MENU" then
 		if jLib.isColliding(jLib.mouse, game.startButton.regular) then
 			game.state = "INGAME"
-			game.startMenu.update()
+			game.resize.update()
 		elseif jLib.isColliding(jLib.mouse, game.settingsButton.regular) then
 			game.state = "SETTINGS"
-			game.startMenu.update()
+			game.resize.update()
 		elseif jLib.isColliding(jLib.mouse, game.friendsButton.regular) then
 			game.state = "FRIENDS_MENU"
-			game.startMenu.update()
+			game.resize.update()
 		end
 	elseif game.state == "INGAME" then
 		--if game.modal == "ESC_MENU" then game.modal = "NONE" end
@@ -73,6 +73,7 @@ end
 
 function love.keypressed(key)
 	if key == "escape" and game.state == "INGAME" then
+		game.resize.update()
 		if game.modal == "ESC_MENU" then game.modal = "NONE" else game.modal = "ESC_MENU" end
 	elseif key == "escape" and game.state == "SETTINGS" then
 		game.state = "START_MENU"
