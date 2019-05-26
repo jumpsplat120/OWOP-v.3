@@ -73,11 +73,13 @@ end
 
 function love.keypressed(key)
 	if key == "escape" and game.state == "INGAME" then
-		game.resize.update()
 		if game.modal == "ESC_MENU" then game.modal = "NONE" else game.modal = "ESC_MENU" end
+		game.resize.update()
 	elseif key == "escape" and game.state == "SETTINGS" then
 		game.state = "START_MENU"
+		game.resize.update()
 	elseif key == "escape" and game.state == "FRIENDS_MENU" then
 		game.state = "START_MENU"
+		game.resize.update()
 	end
 end

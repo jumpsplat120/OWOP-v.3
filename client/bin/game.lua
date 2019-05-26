@@ -48,10 +48,32 @@ function game.ui.draw()
 	if game.state == "INGAME" and game.modal == "ESC_MENU" then
 		love.graphics.setColor(0,0,0,.33)
 		game.escapeModal.background()
-		game.escapeModal.resumeButton.regular:draw()
-		game.escapeModal.settingsButton.regular:draw()
-		game.escapeModal.friendsButton.regular:draw()
-		game.escapeModal.escapeButton.regular:draw()
+		if jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular) then
+			game.escapeModal.resumeButton.hover:draw()
+			game.escapeModal.settingsButton.regular:draw()
+			game.escapeModal.friendsButton.regular:draw()
+			game.escapeModal.escapeButton.regular:draw()
+		elseif jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then
+			game.escapeModal.resumeButton.regular:draw()
+			game.escapeModal.settingsButton.hover:draw()
+			game.escapeModal.friendsButton.regular:draw()
+			game.escapeModal.escapeButton.regular:draw()
+		elseif jLib.isColliding(jLib.mouse, game.escapeModal.friendsButton.regular) then
+			game.escapeModal.resumeButton.regular:draw()
+			game.escapeModal.settingsButton.regular:draw()
+			game.escapeModal.friendsButton.hover:draw()
+			game.escapeModal.escapeButton.regular:draw()
+		elseif jLib.isColliding(jLib.mouse, game.escapeModal.escapeButton.regular) then
+			game.escapeModal.resumeButton.regular:draw()
+			game.escapeModal.settingsButton.regular:draw()
+			game.escapeModal.friendsButton.regular:draw()
+			game.escapeModal.escapeButton.hover:draw()
+		else
+			game.escapeModal.resumeButton.regular:draw()
+			game.escapeModal.settingsButton.regular:draw()
+			game.escapeModal.friendsButton.regular:draw()
+			game.escapeModal.escapeButton.regular:draw()
+		end
 	end
 end
 
@@ -161,14 +183,24 @@ function game.update(dt)
 		game.loadPlayer.x, game.loadPlayer.y = jLib.window.width / 2, jLib.window.height / 2
 		game.loadPlayer.canvas = love.graphics.newCanvas((game.loadPlayer.size * 2) * game.loadPlayer.scale + 5,(game.loadPlayer.size * 2) * game.loadPlayer.scale + 5)
 	elseif game.state == "INGAME" then
-		if game.modal == "ESC_MENU" and jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular) then
-			print("resume")
-		elseif game.modal == "ESC_MENU" and jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then
-			print("settings")
-		elseif game.modal == "ESC_MENU" and jLib.isColliding(jLib.mouse, game.escapeModal.friendsButton.regular) then
-			print("friends")
-		elseif game.modal == "ESC_MENU" and jLib.isColliding(jLib.mouse, game.escapeModal.escapeButton.regular) then
-			print("esc")
+		if game.modal == "ESC_MENU" then
+			game.hoverTimer = game.hoverTimer + dt
+			local bounce = jLib.map(1,3,1,1.5,(math.sin(game.hoverTimer)))
+			if jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular) then
+				game.escapeModal.resumeButton.hover.w,  game.escapeModal.resumeButton.hover.h =  game.escapeModal.resumeButton.regular.w * bounce,  game.escapeModal.resumeButton.regular.h * bounce
+			elseif jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then
+				game.escapeModal.settingsButton.hover.w,  game.escapeModal.settingsButton.hover.h =  game.escapeModal.settingsButton.regular.w * bounce,  game.escapeModal.settingsButton.regular.h * bounce
+			elseif jLib.isColliding(jLib.mouse, game.escapeModal.friendsButton.regular) then
+				game.escapeModal.friendsButton.hover.w,  game.escapeModal.friendsButton.hover.h =  game.escapeModal.friendsButton.regular.w * bounce,  game.escapeModal.friendsButton.regular.h * bounce
+			elseif jLib.isColliding(jLib.mouse, game.escapeModal.escapeButton.regular) then
+				game.escapeModal.escapeButton.hover.w,  game.escapeModal.escapeButton.hover.h =  game.escapeModal.escapeButton.regular.w * bounce,  game.escapeModal.escapeButton.regular.h * bounce
+			else
+				game.escapeModal.resumeButton.hover.w, game.escapeModal.resumeButton.hover.h = game.escapeModal.resumeButton.regular.w, game.escapeModal.resumeButton.regular.h
+				game.escapeModal.settingsButton.hover.w, game.escapeModal.settingsButton.hover.h = game.escapeModal.settingsButton.regular.w, game.escapeModal.settingsButton.regular.h
+				game.escapeModal.friendsButton.hover.w, game.escapeModal.friendsButton.hover.h = game.escapeModal.friendsButton.regular.w, game.escapeModal.friendsButton.regular.h
+				game.escapeModal.escapeButton.hover.w, game.escapeModal.escapeButton.hover.h = game.escapeModal.escapeButton.regular.w, game.escapeModal.escapeButton.regular.h
+				game.hoverTimer = 4.5
+			end
 		end
 	elseif game.state == "FRIENDS_MENU" then
 	end
@@ -197,8 +229,8 @@ function game.resize.update()
 		game.friendsButton.click.x, game.friendsButton.click.y = cw, ch	+ h + (h / 2)
 	elseif game.state == "INGAME" then
 		if game.modal == "ESC_MENU" then
-			local w, h = game.escapeModal.resumeButton.regular.w * game.scale, game.escapeModal.resumeButton.regular.h
-			local margin = 0
+			local w, h = game.escapeModal.resumeButton.regular.w * game.scale, game.escapeModal.resumeButton.regular.h * game.scale
+			local margin = 20 * game.scale
 			
 			game.escapeModal.resumeButton.regular.x, game.escapeModal.resumeButton.regular.y = cw, ch - (h * 1.5) - (margin * 1.5)
 			game.escapeModal.settingsButton.regular.x, game.escapeModal.settingsButton.regular.y = cw, ch - (h * .5) - (margin * .5)
