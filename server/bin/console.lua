@@ -3,14 +3,12 @@ con = {}
 con.font = love.graphics.newFont("assets/terminal.ttf")
 con.fontHeight = con.font:getHeight()
 con.fontWidth = con.font:getWidth("a") -- Get the width of a single character
-con.text = ""
-con.inputText = ""
-con.index = 0
-con.lineAmount = 0
+con.text, con.inputText = "", ""
+con.index, con.lineAmount = 0, 0
 con.inputLineAmount = math.floor((con.text:len() + 1) * con.fontWidth / win.width) -- Also calculated in love.textinput callback
 con.maxVisibleLines = win.height / con.fontHeight
 con.maxLines = 500 --Any line after this amount will be deleted.
-con.x, con.y, con.yNudge = 0, 3948, 0
+con.x, con.y, con.yNudge, con.yLineDelete = 0, 3948, 0, 0
 con.history, con.historyIndex = {}, 1
 con.scrollIndex = math.floor(math.min(math.max(win.height, 2 + ((win.height / 30) / 2)), win.height - ((win.height / 30) / 2) - 2))
 con.isHighlighted = false
@@ -18,7 +16,7 @@ con.isCool = true
 
 con.log = function()
 	love.graphics.setColor(1,1,1,1)
-	love.graphics.printf(con.text, con.font, con.x, con.y +	con.yNudge, win.width - 15)
+	love.graphics.printf(con.text, con.font, con.x, con.y +	con.yNudge + (con.yLineDelete * con.fontHeight), win.width - 15)
 end
 
 con.input = function()
@@ -112,6 +110,13 @@ end
 con.update = function(dt)
 	con.yNudge = -(con.scrollIndex * con.fontHeight) - (con.inputLineAmount * con.fontHeight) - (con.lineAmount * con.fontHeight)
 	
+	if con.text:len() > 9500 then
+		local before = con.calculate()
+		con.text = con.text:sub(1000)
+		con.print("Deleting lines...")
+		local after = con.calculate()
+		con.yLineDelete = con.yLineDelete + (before - after) + 1
+	end
 	if love.mouse.isDown(1) then
 		local mx, my = love.mouse.getPosition()
 		if mx >= win.width - 15 then
@@ -132,6 +137,16 @@ con.update = function(dt)
 	end
 	
 	con.cooldown()
+end
+
+function con.clear()
+	local lines = con.calculate()
+	con.text = ""
+	con.yLineDelete = con.yLineDelete + lines + 1
+end
+
+function con.calculate()
+	return select(2, string.gsub(con.text, "\n", ""))
 end
 
 function love.mousepressed(x, y, button)

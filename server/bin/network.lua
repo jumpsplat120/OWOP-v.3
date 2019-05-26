@@ -60,8 +60,7 @@ function network.sendto(data, address, port)
 	return "sent " .. data
 end
 
-function network.broadcast(data)
-	local data = "Broadcast:" .. data
+function network.sendtoall(data)
 	if #server.clients == 0 then 
 		con.print("No one connected to send this to :(")
 		return

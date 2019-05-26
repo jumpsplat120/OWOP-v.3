@@ -5,21 +5,35 @@ Object = require "bin/classic"
          require "bin/character"
          require "bin/network"
          require "bin/game"
+		 require "bin/gui"
+		 require "bin/start_menu"
+		 require "bin/settings"
+		 require "bin/camera"
 
 --------------MAIN--------------
-		 
+
 function love.load()
 	game.load()
 	network.load()
 end
 
 function love.draw()
-	game.draw()
+	camera:set()
+		game.draw()
+	camera:unset()
+	game.ui.draw()
 	jLib.draw()
+	love.graphics.setColor(jLib.color.blue)
+	for i = 1, #test do
+		love.graphics.circle("fill", test[i].x or 0, test[i].y or 0, 4)
+	end
 end
 
 function love.update(dt)
+	local poly = {100, 100, 100, 200, 200, 200}
+	print(jLib.isInside(poly, jLib.mouse.x, jLib.mouse.y))
 	local data = network.update(dt)
+	if data then print(data) end
 	game.update(dt)
 	jLib.update(dt)
 end
@@ -29,13 +43,14 @@ end
 function love.resize(width, height)
 	jLib.window.width, jLib.window.height = width, height
 	game.scale = ((math.min(jLib.window.width, jLib.window.height) - 600) / 600) + 1
+	game.startMenu.update()
 end
 
 function love.quit()
 	game.updateSave()
 end
 
-function love.wheelmoved(x,y)
+function love.wheelmoved(x, y)
 	if y < 0 and game.player.scale > .6 then
 		game.player.scale = game.player.scale - .1
 	elseif y > 0 and game.player.scale < 5 then
@@ -44,19 +59,27 @@ function love.wheelmoved(x,y)
 	game.player.canvas = love.graphics.newCanvas((game.player.size * 2) * game.player.scale + 5,(game.player.size * 2) * game.player.scale + 5)
 end
 
-function love.keypressed(key)
-	if key == "`" then
-		if game.state == "START_MENU" then
-			game.state = "SETTINGS"
-		elseif game.state == "SETTINGS" then
-			game.state = "LOAD_SCREEN"
-		elseif game.state == "LOAD_SCREEN" then
+function love.mousereleased(x, y, button)
+	if game.state == "START_MENU" then
+		if jLib.isColliding(jLib.mouse, game.startButton.regular) then
 			game.state = "INGAME"
-		elseif game.state == "INGAME" then
-			game.state = "START_MENU"
+			game.startMenu.update()
+		elseif jLib.isColliding(jLib.mouse, game.settingsButton.regular) then
+			game.state = "SETTINGS"
+			game.startMenu.update()
+		elseif jLib.isColliding(jLib.mouse, game.friendsButton.regular) then
+			game.state = "FRIENDS_MENU"
+			game.startMenu.update()
 		end
 	end
-	if key == "f" then
-		game.player.color = jLib.color.red
+end
+
+function love.keypressed(key)
+	if key == "escape" and game.state == "INGAME" then
+		game.modal = "ESC_MENU"
+	elseif key == "escape" and game.state == "SETTINGS" then
+		game.state = "START_MENU"
+	elseif key == "escape" and game.state == "FRIENDS_MENU" then
+		game.state = "START_MENU"
 	end
 end

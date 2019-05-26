@@ -45,6 +45,7 @@ function love.keypressed(key, scancode, isRepeat)
 	elseif key == "right" then
 		if con.index < con.inputText:len() then con.index = con.index + 1 else con.index = con.inputText:len() end
 	elseif key == "up" then
+		if #con.history == 0 then return end
 		con.inputText = con.history[con.historyIndex] or con.history[#con.history]
 		con.index = con.inputText:len()
 		con.historyIndex = con.historyIndex + 1	

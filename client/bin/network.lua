@@ -60,8 +60,18 @@ end
 function network.response(data)
 	if data == "Pong!" then
 		server.pong = love.timer.getTime()
+	elseif data == "SPAM_TEST" then
+		network.spamTest(50)
 	elseif string.find(data, "Broadcast:") then
-		game.broadcast(data)
+		game.broadcast.func(data)
 	end
 	return data
+end
+
+function network.spamTest(amt)
+	local index = 0
+	while index < amt do
+		network.send("Spam... " .. tostring(index))
+		index = index + 1
+	end
 end
