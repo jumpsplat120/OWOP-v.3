@@ -100,6 +100,8 @@ end
 --Determine if two objects are colliding with each other. Pass two tables with center x, y arguments. Also pass tables with width/height if rectangle, or radius if circle.
 function jLib.isColliding(obj1, obj2, form)
 	form = form or "rectangle" --rectangle/circle
+	assert(obj1, "jLib.isColliding() has thrown an error; missing obj1 parameter.")
+	assert(obj2, "jLib.isColliding() has thrown an error; missing obj2 parameter.")
 	local x1, y1 = obj1.x, obj1.y
 	local x2, y2 = obj2.x, obj2.y
 	

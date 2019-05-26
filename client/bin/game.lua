@@ -46,7 +46,7 @@ function game.load()
 end
 
 function game.ui.draw()
-	if not game.modal == "NONE" then 
+	if not (game.modal == "NONE") then 
 		love.graphics.setColor(0,0,0,.33)
 		game.bgModal()
 	end
@@ -127,7 +127,8 @@ function game.draw()
 			game.friendsButton.regular:draw()
 		end
 	elseif game.state == "SETTINGS" then
-		settings.colorPicker.hitbox:draw()
+		settings.colorPicker.ring:draw()
+		settings.colorPicker.innerCircle:draw()
 	elseif game.state == "LOAD_SCREEN" then
 		local size = .2 * game.scale
 		love.graphics.setColor(game.player.color)
@@ -168,8 +169,8 @@ function game.update(dt)
 			game.hoverTimer = 4.5
 		end
 	elseif game.state == "SETTINGS" then
-		if jLib.isColliding(jLib.mouse, settings.colorPicker.hitbox, "circle") and love.mouse.isDown(1) then 
-			
+		if jLib.isColliding(jLib.mouse, settings.colorPicker.ring, "circle")  and not (jLib.isColliding(jLib.mouse, settings.colorPicker.innerCircle, "circle")) then 
+			print(true)
 		end
 	elseif game.state == "LOAD_SCREEN" then
 		game.loadPlayer.rot = game.loadPlayer.rot + dt
