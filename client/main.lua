@@ -23,15 +23,9 @@ function love.draw()
 	camera:unset()
 	game.ui.draw()
 	jLib.draw()
-	love.graphics.setColor(jLib.color.blue)
-	for i = 1, #test do
-		love.graphics.circle("fill", test[i].x or 0, test[i].y or 0, 4)
-	end
 end
 
 function love.update(dt)
-	local poly = {100, 100, 100, 200, 200, 200}
-	print(jLib.isInside(poly, jLib.mouse.x, jLib.mouse.y))
 	local data = network.update(dt)
 	if data then print(data) end
 	game.update(dt)

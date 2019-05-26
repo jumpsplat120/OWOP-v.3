@@ -130,6 +130,7 @@ function jLib.isInside(obj, x, y)
 	local pgon = {}
 	local it = 1
 	
+	assert(#obj / 2 == 0, "jLib.isInside() has thrown an error; obj parameter does not have an even number of items in table.")
 	for i = 1, #obj, 2 do
 		pgon[it] = {}
 		pgon[it].x, pgon[it].y = obj[i], obj[i + 1]
