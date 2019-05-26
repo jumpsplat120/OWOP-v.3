@@ -5,7 +5,7 @@ function escape_modal.load()
 	local cw, ch = jLib.window.width / 2, jLib.window.height / 2
 	local w = 150
 	local h = w / 3
-	local margin = 25
+	local margin = 20
 		
 	game.escapeModal.resumeButton = {}
 	game.escapeModal.settingsButton = {}

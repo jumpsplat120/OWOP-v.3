@@ -1,7 +1,7 @@
 game = {
 	state = "LOAD_SCREEN", --Possible states are START_MENU, SETTINGS, LOAD_SCREEN, FRIENDS_MENU, INGAME
 	modal = "NONE",        --Possible states are NONE, ESC_MENU, FRIENDS_MENU, BROADCAST
-	save = {}, menu = {}, broadcast = {}, escapeModal = {}, startMenu = {}, ui = {},
+	save = {}, menu = {}, broadcast = {}, escapeModal = {}, startMenu = {}, ui = {}, resize = {},
 	player, isConnected, timer, hoverTimer,
 	scale = ((math.min(jLib.window.width, jLib.window.height) - 600) / 600) + 1,
 	font = love.graphics.newFont("assets/04b_30.ttf", 144),
@@ -178,7 +178,7 @@ function game.update(dt)
 	game.connect()
 end
 
-function game.startMenu.update()
+function game.resize.update()
 	local cw, ch = jLib.window.width / 2, jLib.window.height / 2
 	
 	if game.state == "START_MENU" then
@@ -196,23 +196,25 @@ function game.startMenu.update()
 		game.settingsButton.click.x, game.settingsButton.click.y = cw, ch
 		game.friendsButton.click.x, game.friendsButton.click.y = cw, ch	+ h + (h / 2)
 	elseif game.state == "INGAME" then
-		local w, h = game.escapeModal.resumeButton.regular.w * game.scale, game.escapeModal.resumeButton.regular.h
-		local margin = 25 * game.scale --FIX THE MARGIN
-		
-		game.escapeModal.resumeButton.regular.x, game.escapeModal.resumeButton.regular.y = cw, ch - (h * 1.5) - (margin * 1.5)
-		game.escapeModal.settingsButton.regular.x, game.escapeModal.settingsButton.regular.y = cw, ch - (h * .5) - (margin * .5)
-		game.escapeModal.friendsButton.regular.x, game.escapeModal.friendsButton.regular.y = cw, ch + (h * .5) + (margin * .5)
-		game.escapeModal.escapeButton.regular.x, game.escapeModal.escapeButton.regular.y = cw, ch + (h * 1.5) + (margin * 1.5)
-		
-		game.escapeModal.resumeButton.hover.x, game.escapeModal.resumeButton.hover.y = cw, ch - (h * 1.5) - (margin * 1.5)
-		game.escapeModal.settingsButton.hover.x, game.escapeModal.settingsButton.hover.y = cw, ch - (h * .5) - (margin * .5)
-		game.escapeModal.friendsButton.hover.x, game.escapeModal.friendsButton.hover.y = cw, ch + (h * .5) + (margin * .5)
-		game.escapeModal.escapeButton.hover.x, game.escapeModal.escapeButton.hover.y = cw, ch + (h * 1.5) + (margin * 1.5)
-		
-		game.escapeModal.resumeButton.click.x, game.escapeModal.resumeButton.click.y = cw, ch - (h * 1.5) - (margin * 1.5)
-		game.escapeModal.settingsButton.click.x, game.escapeModal.settingsButton.click.y = cw, ch - (h * .5) - (margin * .5)
-		game.escapeModal.friendsButton.click.x, game.escapeModal.friendsButton.click.y = cw, ch + (h * .5) + (margin * .5)
-		game.escapeModal.escapeButton.click.x, game.escapeModal.escapeButton.click.y = cw, ch + (h * 1.5) + (margin * 1.5)
+		if game.modal == "ESC_MENU" then
+			local w, h = game.escapeModal.resumeButton.regular.w * game.scale, game.escapeModal.resumeButton.regular.h
+			local margin = 0
+			
+			game.escapeModal.resumeButton.regular.x, game.escapeModal.resumeButton.regular.y = cw, ch - (h * 1.5) - (margin * 1.5)
+			game.escapeModal.settingsButton.regular.x, game.escapeModal.settingsButton.regular.y = cw, ch - (h * .5) - (margin * .5)
+			game.escapeModal.friendsButton.regular.x, game.escapeModal.friendsButton.regular.y = cw, ch + (h * .5) + (margin * .5)
+			game.escapeModal.escapeButton.regular.x, game.escapeModal.escapeButton.regular.y = cw, ch + (h * 1.5) + (margin * 1.5)
+			
+			game.escapeModal.resumeButton.hover.x, game.escapeModal.resumeButton.hover.y = cw, ch - (h * 1.5) - (margin * 1.5)
+			game.escapeModal.settingsButton.hover.x, game.escapeModal.settingsButton.hover.y = cw, ch - (h * .5) - (margin * .5)
+			game.escapeModal.friendsButton.hover.x, game.escapeModal.friendsButton.hover.y = cw, ch + (h * .5) + (margin * .5)
+			game.escapeModal.escapeButton.hover.x, game.escapeModal.escapeButton.hover.y = cw, ch + (h * 1.5) + (margin * 1.5)
+			
+			game.escapeModal.resumeButton.click.x, game.escapeModal.resumeButton.click.y = cw, ch - (h * 1.5) - (margin * 1.5)
+			game.escapeModal.settingsButton.click.x, game.escapeModal.settingsButton.click.y = cw, ch - (h * .5) - (margin * .5)
+			game.escapeModal.friendsButton.click.x, game.escapeModal.friendsButton.click.y = cw, ch + (h * .5) + (margin * .5)
+			game.escapeModal.escapeButton.click.x, game.escapeModal.escapeButton.click.y = cw, ch + (h * 1.5) + (margin * 1.5)
+		end
 	end
 	
 end

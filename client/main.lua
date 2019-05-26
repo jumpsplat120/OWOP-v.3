@@ -38,7 +38,7 @@ end
 function love.resize(width, height)
 	jLib.window.width, jLib.window.height = width, height
 	game.scale = ((math.min(jLib.window.width, jLib.window.height) - 600) / 600) + 1
-	game.startMenu.update()
+	game.resize.update()
 end
 
 function love.quit()
