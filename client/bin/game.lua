@@ -148,8 +148,6 @@ function game.draw()
 		love.graphics.setColor(jLib.color.black)
 		love.graphics.print("friends menu")
 	end
-	love.graphics.setColor(jLib.color.red)
-	love.graphics.polygon("fill", 100, 100, 100, 200, 200, 200)
 end
 
 function game.update(dt)
