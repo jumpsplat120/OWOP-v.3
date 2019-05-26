@@ -66,12 +66,14 @@ function love.mousereleased(x, y, button)
 			game.state = "FRIENDS_MENU"
 			game.startMenu.update()
 		end
+	elseif game.state == "INGAME" then
+		--if game.modal == "ESC_MENU" then game.modal = "NONE" end
 	end
 end
 
 function love.keypressed(key)
 	if key == "escape" and game.state == "INGAME" then
-		game.modal = "ESC_MENU"
+		if game.modal == "ESC_MENU" then game.modal = "NONE" else game.modal = "ESC_MENU" end
 	elseif key == "escape" and game.state == "SETTINGS" then
 		game.state = "START_MENU"
 	elseif key == "escape" and game.state == "FRIENDS_MENU" then
