@@ -129,6 +129,7 @@ function game.draw()
 	elseif game.state == "SETTINGS" then
 		settings.colorPicker.ring:draw()
 		settings.colorPicker.innerCircle:draw()
+		settings.colorPicker.triangle:draw()
 	elseif game.state == "LOAD_SCREEN" then
 		local size = .2 * game.scale
 		love.graphics.setColor(game.player.color)

@@ -57,3 +57,34 @@ function CircleButton:update(dt)
 end
 
 ------------------Triangle Button------------------
+
+TriangleButton = Object:extend()
+
+function TriangleButton:new(x, y, rot, size, design, text, color, textColor)
+	self.x, self.y = x or 0, y or 0
+	self.rot = rot or 0
+	self.size = size or 50
+	self.design = design or "fill" --fill/line
+	self.text = text or ""
+	self.color = color or jLib.color.red
+	self.textColor = textColor or jLib.color.white
+	self.canvas = love.graphics.newCanvas(self.size)
+end
+
+function TriangleButton:draw()
+	local tx, ty = 0, 0 - ((math.sqrt(3)/3) * self.size)
+	local rx, ry = 0 + (self.size / 2), 0 + ((math.sqrt(3)/6) * self.size)
+	local lx, ly = 0 - (self.size / 2), 0 + ((math.sqrt(3)/6) * self.size)
+	
+	love.graphics.setCanvas(self.canvas)
+		love.graphics.setColor(self.color)
+		love.graphics.polygon(self.design, tx, ty, rx, ry, lx, ly)
+		love.graphics.setColor(self.textColor)
+		love.graphics.printf(self.text, game.font, 0, 0, jLib.printf.nowrap, "left", 0)
+	love.graphics.setCanvas()
+	
+	love.graphics.draw(self.canvas, self.x, self.y, self.rot)
+end
+
+function TriangleButton:update(dt)
+end
