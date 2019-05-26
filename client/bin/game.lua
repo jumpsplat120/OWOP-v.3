@@ -1,8 +1,9 @@
 game = {
 	state = "LOAD_SCREEN", --Possible states are START_MENU, SETTINGS, LOAD_SCREEN, FRIENDS_MENU, INGAME
-	modal = "NONE",        --Possible states are NONE, ESC_MENU, FRIENDS_MENU, BROADCAST
-	save = {}, menu = {}, broadcast = {}, escapeModal = {}, startMenu = {}, ui = {}, resize = {},
+	modal = "NONE",        --Possible states are NONE, ESC_MENU, FRIENDS_MENU, SETTINGS, BROADCAST
+	save = {}, menu = {}, broadcast = {}, escapeModal = {}, settingsModal = {}, startMenu = {}, ui = {}, resize = {},
 	player, isConnected, timer, hoverTimer,
+	bgModal = function() love.graphics.rectangle("fill", 0, 0, jLib.window.width, jLib.window.height) end,
 	scale = ((math.min(jLib.window.width, jLib.window.height) - 600) / 600) + 1,
 	font = love.graphics.newFont("assets/04b_30.ttf", 144),
 	broadcastModal = love.graphics.newImage("assets/modal.png")
@@ -45,35 +46,40 @@ function game.load()
 end
 
 function game.ui.draw()
-	if game.state == "INGAME" and game.modal == "ESC_MENU" then
+	if not game.modal == "NONE" then 
 		love.graphics.setColor(0,0,0,.33)
-		game.escapeModal.background()
+		game.bgModal()
+	end
+	
+	if game.modal == "ESC_MENU" then
 		if jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular) then
-			game.escapeModal.resumeButton.hover:draw()
+			if love.mouse.isDown(1) then game.escapeModal.resumeButton.click:draw() else game.escapeModal.resumeButton.hover:draw() end
 			game.escapeModal.settingsButton.regular:draw()
 			game.escapeModal.friendsButton.regular:draw()
 			game.escapeModal.escapeButton.regular:draw()
 		elseif jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then
+			if love.mouse.isDown(1) then game.escapeModal.settingsButton.click:draw() else game.escapeModal.settingsButton.hover:draw() end
 			game.escapeModal.resumeButton.regular:draw()
-			game.escapeModal.settingsButton.hover:draw()
 			game.escapeModal.friendsButton.regular:draw()
 			game.escapeModal.escapeButton.regular:draw()
 		elseif jLib.isColliding(jLib.mouse, game.escapeModal.friendsButton.regular) then
+			if love.mouse.isDown(1) then game.escapeModal.friendsButton.click:draw() else game.escapeModal.friendsButton.hover:draw() end
 			game.escapeModal.resumeButton.regular:draw()
 			game.escapeModal.settingsButton.regular:draw()
-			game.escapeModal.friendsButton.hover:draw()
 			game.escapeModal.escapeButton.regular:draw()
 		elseif jLib.isColliding(jLib.mouse, game.escapeModal.escapeButton.regular) then
+			if love.mouse.isDown(1) then game.escapeModal.escapeButton.click:draw() else game.escapeModal.escapeButton.hover:draw() end
 			game.escapeModal.resumeButton.regular:draw()
 			game.escapeModal.settingsButton.regular:draw()
 			game.escapeModal.friendsButton.regular:draw()
-			game.escapeModal.escapeButton.hover:draw()
 		else
 			game.escapeModal.resumeButton.regular:draw()
 			game.escapeModal.settingsButton.regular:draw()
 			game.escapeModal.friendsButton.regular:draw()
 			game.escapeModal.escapeButton.regular:draw()
 		end
+	elseif game.modal == "SETTINGS" then
+	elseif game.modal == "FRIENDS_MENU" then
 	end
 end
 
@@ -104,27 +110,15 @@ function game.draw()
 	
 	if game.state == "START_MENU" then
 		if jLib.isColliding(jLib.mouse, game.startButton.regular) then
-			if love.mouse.isDown(1) then
-				game.startButton.click:draw()
-			else
-				game.startButton.hover:draw()
-			end
+			if love.mouse.isDown(1) then game.startButton.click:draw() else game.startButton.hover:draw() end
 			game.settingsButton.regular:draw()
 			game.friendsButton.regular:draw()
 		elseif jLib.isColliding(jLib.mouse, game.settingsButton.regular) then
-			if love.mouse.isDown(1) then
-				game.settingsButton.click:draw()
-			else
-				game.settingsButton.hover:draw()
-			end
+			if love.mouse.isDown(1) then game.settingsButton.click:draw() else game.settingsButton.hover:draw() end
 			game.startButton.regular:draw()
 			game.friendsButton.regular:draw()
 		elseif jLib.isColliding(jLib.mouse, game.friendsButton.regular) then
-			if love.mouse.isDown(1) then
-				game.friendsButton.click:draw()
-			else
-				game.friendsButton.hover:draw()
-			end
+			if love.mouse.isDown(1) then game.friendsButton.click:draw() else game.friendsButton.hover:draw() end
 			game.startButton.regular:draw()
 			game.settingsButton.regular:draw()
 		else
@@ -256,7 +250,7 @@ function game.connect()
 		local waitTime = 10
 		local timer = love.timer.getTime()		
 		if timer > game.timer + waitTime then 
-			jLib.error("We were unable to connect you to the game servers! You might be having trouble with your internet, or we might be having difficulty on our side. Please try again in a few minutes. If you're still getting this error, please send this error code to the developer: ITDIDNTFUCKINWORK420") 
+			jLib.error("We were unable to connect you to the game servers! You might be having trouble with your internet, or we might be having difficulty on our side. Please try again in a few minutes. If you're still getting this error, please send this error code to the developer: LOADTIMEOUT") 
 			return
 		end
 		game.state = "LOAD_SCREEN"

@@ -56,24 +56,34 @@ end
 
 function love.mousereleased(x, y, button)
 	if game.state == "START_MENU" then
-		if jLib.isColliding(jLib.mouse, game.startButton.regular) then
+		if jLib.isColliding(jLib.mouse, game.startButton.regular) then 
 			game.state = "INGAME"
-			game.resize.update()
-		elseif jLib.isColliding(jLib.mouse, game.settingsButton.regular) then
+		elseif jLib.isColliding(jLib.mouse, game.settingsButton.regular) then 
 			game.state = "SETTINGS"
-			game.resize.update()
-		elseif jLib.isColliding(jLib.mouse, game.friendsButton.regular) then
-			game.state = "FRIENDS_MENU"
+		elseif jLib.isColliding(jLib.mouse, game.friendsButton.regular) then 
+			game.state = "FRIENDS_MENU" 
+		end
+		game.resize.update()
+	elseif game.state == "INGAME" then
+		if game.modal == "ESC_MENU" then
+			if jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular) then
+				game.modal = "NONE"
+			elseif jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then
+				game.modal = "SETTINGS"
+			elseif jLib.isColliding(jLib.mouse, game.escapeModal.friendsButton.regular) then
+				game.modal = "FRIENDS_MENU"
+			elseif jLib.isColliding(jLib.mouse, game.escapeModal.escapeButton.regular) then
+				game.state = "START_MENU"
+				game.modal = "NONE"
+			end
 			game.resize.update()
 		end
-	elseif game.state == "INGAME" then
-		--if game.modal == "ESC_MENU" then game.modal = "NONE" end
 	end
 end
 
 function love.keypressed(key)
 	if key == "escape" and game.state == "INGAME" then
-		if game.modal == "ESC_MENU" then game.modal = "NONE" else game.modal = "ESC_MENU" end
+		if game.modal == "ESC_MENU" then  game.modal = "NONE" else game.modal = "ESC_MENU"  end
 		game.resize.update()
 	elseif key == "escape" and game.state == "SETTINGS" then
 		game.state = "START_MENU"
