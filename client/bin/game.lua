@@ -161,6 +161,15 @@ function game.update(dt)
 		game.loadPlayer.x, game.loadPlayer.y = jLib.window.width / 2, jLib.window.height / 2
 		game.loadPlayer.canvas = love.graphics.newCanvas((game.loadPlayer.size * 2) * game.loadPlayer.scale + 5,(game.loadPlayer.size * 2) * game.loadPlayer.scale + 5)
 	elseif game.state == "INGAME" then
+		if game.modal == "ESC_MENU" and jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular) then
+			print("resume")
+		elseif game.modal == "ESC_MENU" and jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then
+			print("settings")
+		elseif game.modal == "ESC_MENU" and jLib.isColliding(jLib.mouse, game.escapeModal.friendsButton.regular) then
+			print("friends")
+		elseif game.modal == "ESC_MENU" and jLib.isColliding(jLib.mouse, game.escapeModal.escapeButton.regular) then
+			print("esc")
+		end
 	elseif game.state == "FRIENDS_MENU" then
 	end
 	
