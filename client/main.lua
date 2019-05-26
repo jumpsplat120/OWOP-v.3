@@ -7,6 +7,7 @@ Object = require "bin/classic"
          require "bin/game"
 		 require "bin/gui"
 		 require "bin/start_menu"
+		 require "bin/escape_modal"
 		 require "bin/settings"
 		 require "bin/camera"
 
