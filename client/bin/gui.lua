@@ -107,3 +107,31 @@ function TriangleButton:update(dt)
 	
 	self.vert = {tx, ty, rx, ry, lx, ly}
 end
+
+------------------Ring Button------------------
+
+RingButton = CircleButton:extend()
+
+function RingButton:new(x, y, r, design, text, color, textColor)
+	CircleButton.super:new(x, y, r, design, text, color, textColor)
+end
+
+function RingButton:draw()
+	local scale = (.2 * game.scale) * ((self.r * 2) / game.font:getHeight()) * (4.5 / self.text:len())
+	
+	love.graphics.stencil(function() love.graphics.circle(self.design, self.x, self.y, self.r - (self.r * .9)) end)
+	love.graphics.setStencilTest("less", 1)
+	
+	love.graphics.setColor(self.color)
+	love.graphics.circle(self.design, self.x, self.y, self.r)
+	if self.design == "fill" then 
+		love.graphics.setColor(self.textColor) 
+	else
+		love.graphics.setColor(self.color) 
+	end
+	love.graphics.printf(self.text, game.font, self.x, self.y, jLib.printf.nowrap, "left", 0, scale, scale, game.font:getWidth(self.text) / 2, game.font:getHeight() / 2)
+	love.graphics.setStencilTest()
+end
+
+function RingButton:update(dt)
+end
