@@ -60,7 +60,7 @@ end
 
 TriangleButton = Object:extend()
 
-function TriangleButton:new(x, y, rot, size, design, text, color, textColor)
+function TriangleButton:new(x, y, size, rot, design, text, color, textColor)
 	self.x, self.y = x or 0, y or 0
 	self.rot = rot or 0
 	self.size = size or 50
@@ -68,23 +68,42 @@ function TriangleButton:new(x, y, rot, size, design, text, color, textColor)
 	self.text = text or ""
 	self.color = color or jLib.color.red
 	self.textColor = textColor or jLib.color.white
-	self.canvas = love.graphics.newCanvas(self.size)
+	self.canvas = love.graphics.newCanvas(self.size, self.size)
+	self.vert = {}
 end
 
 function TriangleButton:draw()
-	local tx, ty = 0, 0 - ((math.sqrt(3)/3) * self.size)
-	local rx, ry = 0 + (self.size / 2), 0 + ((math.sqrt(3)/6) * self.size)
-	local lx, ly = 0 - (self.size / 2), 0 + ((math.sqrt(3)/6) * self.size)
-	
+	local cc = self.size / 2
+	local nudge = self.size / 10 --Triangle draws slightly higher than it should, because equilateral triangle
+	local tx, ty = cc, cc - ((math.sqrt(3)/3) * self.size) + nudge
+	local rx, ry = cc + (self.size / 2), cc + ((math.sqrt(3)/6) * self.size) + nudge
+	local lx, ly = cc - (self.size / 2), cc + ((math.sqrt(3)/6) * self.size) + nudge
+
 	love.graphics.setCanvas(self.canvas)
 		love.graphics.setColor(self.color)
 		love.graphics.polygon(self.design, tx, ty, rx, ry, lx, ly)
 		love.graphics.setColor(self.textColor)
-		love.graphics.printf(self.text, game.font, 0, 0, jLib.printf.nowrap, "left", 0)
+		love.graphics.printf(self.text, game.font, self.size / 2, self.size / 2, jLib.printf.nowrap, "left", 0)
 	love.graphics.setCanvas()
 	
-	love.graphics.draw(self.canvas, self.x, self.y, self.rot)
+	love.graphics.draw(self.canvas, self.x, self.y, self.rot, 1, 1, self.size / 2, (self.size / 2) + (self.size / 10)) --That last bit is nudge
 end
 
 function TriangleButton:update(dt)
+	--[[*We use seperate versions of the same coord set
+		*due to the version that we use for the poly code
+		*are all set with a 0,0 origin. That's because we
+		*are drawing the triangle into a canvas, to make
+		*make rotating the triangle easier. But that means
+		*that we have two sets of points. The points
+		*that are accessible by self.vert are accurate, but
+		*but are not the points actually being used to draw
+		*the triangle. Modifying the vertex points will NOT
+		*do anything to modify the shape.
+	--]]
+	local tx, ty = self.x, self.y - ((math.sqrt(3)/3) * self.size)
+	local rx, ry = self.x + (self.size / 2), self.y + ((math.sqrt(3)/6) * self.size)
+	local lx, ly = self.x - (self.size / 2), self.y + ((math.sqrt(3)/6) * self.size)
+	
+	self.vert = {tx, ty, rx, ry, lx, ly}
 end

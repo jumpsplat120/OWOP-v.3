@@ -170,8 +170,13 @@ function game.update(dt)
 			game.hoverTimer = 4.5
 		end
 	elseif game.state == "SETTINGS" then
-		if jLib.isColliding(jLib.mouse, settings.colorPicker.ring, "circle")  and not (jLib.isColliding(jLib.mouse, settings.colorPicker.innerCircle, "circle")) then 
-			print(true)
+		settings.colorPicker.triangle:update(dt)
+		if jLib.isColliding(jLib.mouse, settings.colorPicker.ring, "circle")  and not (jLib.isColliding(jLib.mouse, settings.colorPicker.innerCircle, "circle")) and love.mouse.isDown(1) then 
+			--Draw a line from center of circle to mouse, then extend that line farther and return where the two intersect
+			print("ring")
+		end
+		if jLib.isInside(settings.colorPicker.triangle.vert, jLib.mouse.x, jLib.mouse.y) and love.mouse.isDown(1) then
+			print("triangle")
 		end
 	elseif game.state == "LOAD_SCREEN" then
 		game.loadPlayer.rot = game.loadPlayer.rot + dt
