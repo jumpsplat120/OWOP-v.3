@@ -113,13 +113,13 @@ end
 RingButton = CircleButton:extend()
 
 function RingButton:new(x, y, r, design, text, color, textColor)
-	CircleButton.super:new(x, y, r, design, text, color, textColor)
+	RingButton.super.new(self, x, y, r, design, text, color, textColor)
 end
 
 function RingButton:draw()
 	local scale = (.2 * game.scale) * ((self.r * 2) / game.font:getHeight()) * (4.5 / self.text:len())
 	
-	love.graphics.stencil(function() love.graphics.circle(self.design, self.x, self.y, self.r - (self.r * .9)) end)
+	love.graphics.stencil(function() love.graphics.circle(self.design, self.x, self.y, self.r - (self.r * .2)) end)
 	love.graphics.setStencilTest("less", 1)
 	
 	love.graphics.setColor(self.color)

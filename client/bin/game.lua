@@ -46,7 +46,7 @@ function game.load()
 end
 
 function game.ui.draw()
-	if not (game.modal == "NONE") then 
+	if not (game.modal == "NONE") and not (game.modal == "BROADCAST") then 
 		love.graphics.setColor(0,0,0,.33)
 		game.bgModal()
 	end

@@ -35,6 +35,7 @@ function network.load()
 		return
 	end
 	game.isConnected = true
+	print("Connected to ", server.peer_ip, server.peer_port)
 end
 
 function network.update(dt)
