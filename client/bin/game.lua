@@ -127,6 +127,7 @@ function game.draw()
 			game.friendsButton.regular:draw()
 		end
 	elseif game.state == "SETTINGS" then
+		settings.colorPicker.draw()
 	elseif game.state == "LOAD_SCREEN" then
 		local size = .2 * game.scale
 		love.graphics.setColor(game.player.color)
