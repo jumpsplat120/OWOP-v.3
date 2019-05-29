@@ -14,6 +14,7 @@ server.udp = socket.udp()
 server.udp:settimeout(server.timeout)
 server.udp:setsockname(server.address.ip, server.address.port)
 server.ip, server.port = server.udp:getsockname()
+con.print("Server started...", server.ip, server.port)
 
 function server.updateConnected()
 	for k, v in pairs(server.clients) do

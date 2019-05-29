@@ -26,6 +26,7 @@ function server.ping()
 end
 
 function network.load()
+	print("Connecting...")
 	local success_or_nil, err = server.udp:send("Requesting connection...")
 	if err then error(err) end
 	local data = server.udp:receive()
