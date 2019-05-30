@@ -169,12 +169,11 @@ function game.update(dt)
 		end
 	elseif game.state == "SETTINGS" then
 		settings.colorPicker.triangle:update(dt)
-		if jLib.isColliding(jLib.mouse, settings.colorPicker.ring, "circle")  and not (jLib.isColliding(jLib.mouse, settings.colorPicker.innerCircle, "circle")) and love.mouse.isDown(1) then 
-			--Draw a line from center of circle to mouse, then extend that line farther and return where the two intersect
-			print("ring")
+		if jLib.isColliding(jLib.mouse, settings.colorPicker.ring, "circle")  and not (jLib.isColliding(jLib.mouse, settings.colorPicker.innerCircle, "circle")) and love.mouse.isDown(1) then
+			settings.colorPicker.triangle.rot = jLib.getDir(settings.colorPicker.triangle.x, settings.colorPicker.triangle.y, jLib.mouse.x, jLib.mouse.y)
 		end
 		if jLib.isInside(settings.colorPicker.triangle.vert, jLib.mouse.x, jLib.mouse.y) and love.mouse.isDown(1) then
-			print("triangle")
+			settings.colorPicker.tinyCircle.x, settings.colorPicker.tinyCircle.y = jLib.mouse.x, jLib.mouse.y
 		end
 	elseif game.state == "LOAD_SCREEN" then
 		game.loadPlayer.rot = game.loadPlayer.rot + dt

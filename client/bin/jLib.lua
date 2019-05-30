@@ -163,3 +163,8 @@ function jLib.isInside(obj, x, y)
  
 	return  inside_flag
 end
+
+--Returns direction in radians. Assumes pointing straight up
+function jLib.getDir(fromX, fromY, toX, toY)
+	return math.atan2(toY - fromY, toX - fromX) + (math.pi * .5)
+end

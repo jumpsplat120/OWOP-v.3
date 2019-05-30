@@ -21,7 +21,7 @@ settings.colorPicker.draw = function()
 	settings.colorPicker.ring:draw()
 	settings.colorPicker.innerCircle:draw()
 	settings.colorPicker.triangle:draw()
-	settings.colorPicker.tinyCircle:draw()
+	settings.colorPicker.tinyCircle:draw() --ROTATION CODE FOR THE CIRCLE
 end
 
 --------------Scaling/Position Function--------------
@@ -32,7 +32,7 @@ settings.colorPicker.update = function(x, y, scale) --Multiplier; scale of 1 is 
 	
 	local size = scale * 200
 	
-	settings.colorPicker.ring, settings.colorPicker.innerCircle, settings.colorPicker.triangle, settings.colorPicker.tinyCircle = nil, nil, nil, nil --Destroy them before recreating them
+	settings.colorPicker.ring, settings.colorPicker.innerCircle, settings.colorPicker.triangle, settings.colorPicker.tinyCircle = nil, nil, nil, nil --NEW SOLUJTION THAT ISN'T THIS; Object resets on resizing screen
 	
 	settings.colorPicker.ring = CircleButton(x, y, size * .5, "fill", "", jLib.color.red)
 	settings.colorPicker.innerCircle = CircleButton(x, y, size * .4, "fill", "", jLib.color.white)
