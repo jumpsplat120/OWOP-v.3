@@ -246,6 +246,8 @@ function game.resize.update()
 			game.escapeModal.friendsButton.click.x, game.escapeModal.friendsButton.click.y = cw, ch + (h * .5) + (margin * .5)
 			game.escapeModal.escapeButton.click.x, game.escapeModal.escapeButton.click.y = cw, ch + (h * 1.5) + (margin * 1.5)
 		end
+	elseif game.state == "SETTINGS" then
+		settings.colorPicker.update(nil,nil,1 * game.scale)
 	end
 	
 end
