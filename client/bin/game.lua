@@ -154,7 +154,7 @@ function game.update(dt)
 	
 	if game.state == "START_MENU" then
 		game.hoverTimer = game.hoverTimer + dt
-		local bounce = jLib.map(1,3,1,1.5,(math.sin(game.hoverTimer)))
+		local bounce = jLib.map(-1,1,1,1.5,math.sin(game.hoverTimer))
 		if jLib.isColliding(jLib.mouse, game.startButton.regular) then
 			game.startButton.hover.w, game.startButton.hover.h = game.startButton.regular.w * bounce, game.startButton.regular.h * bounce
 		elseif jLib.isColliding(jLib.mouse, game.settingsButton.regular) then
@@ -196,13 +196,13 @@ function game.update(dt)
 		end
 	elseif game.state == "LOAD_SCREEN" then
 		game.loadPlayer.rot = game.loadPlayer.rot + dt
-		game.loadPlayer.scale = jLib.map(0,2,.25,1,(math.sin(game.loadPlayer.rot) + 1)) * game.scale
+		game.loadPlayer.scale = jLib.map(-1,1,.75,1.5,math.sin(game.loadPlayer.rot)) * game.scale
 		game.loadPlayer.x, game.loadPlayer.y = jLib.window.width / 2, jLib.window.height / 2
 		game.loadPlayer.canvas = love.graphics.newCanvas((game.loadPlayer.size * 2) * game.loadPlayer.scale + 5,(game.loadPlayer.size * 2) * game.loadPlayer.scale + 5)
 	elseif game.state == "INGAME" then
 		if game.modal == "ESC_MENU" then
 			game.hoverTimer = game.hoverTimer + dt
-			local bounce = jLib.map(1,3,1,1.5,(math.sin(game.hoverTimer)))
+			local bounce = jLib.map(-1,1,1,1.5,math.sin(game.hoverTimer))
 			if jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular) then
 				game.escapeModal.resumeButton.hover.w,  game.escapeModal.resumeButton.hover.h =  game.escapeModal.resumeButton.regular.w * bounce,  game.escapeModal.resumeButton.regular.h * bounce
 			elseif jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then
