@@ -8,6 +8,9 @@ settings.colorPicker.ring = {}
 settings.colorPicker.innerCircle = {}
 settings.colorPicker.tinyCircle = {}
 
+settings.colorPicker.canvas = love.graphics.newCanvas(200, 200)
+settings.colorPicker.rot = 0
+
 --------------Define Shapes through Constructor Classes (gui.lua)--------------
 
 settings.colorPicker.ring = CircleButton(0, 0, 100, "fill", "", jLib.color.red)
@@ -21,7 +24,7 @@ settings.colorPicker.draw = function()
 	settings.colorPicker.ring:draw()
 	settings.colorPicker.innerCircle:draw()
 	settings.colorPicker.triangle:draw()
-	settings.colorPicker.tinyCircle:draw() --ROTATION CODE FOR THE CIRCLE
+	settings.colorPicker.tinyCircle:draw()
 end
 
 --------------Scaling/Position Function--------------

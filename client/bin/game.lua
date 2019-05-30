@@ -168,12 +168,26 @@ function game.update(dt)
 			game.hoverTimer = 4.5
 		end
 	elseif game.state == "SETTINGS" then
-		settings.colorPicker.triangle:update(dt)
+		settings.colorPicker.triangle:update(dt)	
 		if jLib.isColliding(jLib.mouse, settings.colorPicker.ring, "circle")  and not (jLib.isColliding(jLib.mouse, settings.colorPicker.innerCircle, "circle")) and love.mouse.isDown(1) then
 			settings.colorPicker.triangle.rot = jLib.getDir(settings.colorPicker.triangle.x, settings.colorPicker.triangle.y, jLib.mouse.x, jLib.mouse.y)
 		end
 		if jLib.isInside(settings.colorPicker.triangle.vert, jLib.mouse.x, jLib.mouse.y) and love.mouse.isDown(1) then
-			settings.colorPicker.tinyCircle.x, settings.colorPicker.tinyCircle.y = jLib.mouse.x, jLib.mouse.y
+			local x, y
+			
+			love.graphics.push()
+				--APPLY ROTATION TOO COORDS
+				love.graphics.translate(settings.colorPicker.triangle.x, settings.colorPicker.triangle.y)
+				love.graphics.rotate(settings.colorPicker.triangle.rot + math.pi) --Why do I have to add pi??
+				love.graphics.translate(-settings.colorPicker.triangle.x, -settings.colorPicker.triangle.y)
+				
+				--APPLY TRANSFORMATION TO MOUSE COORDS
+				x, y = love.graphics.transformPoint(jLib.mouse.x, jLib.mouse.y)
+				
+				--MODIFY TINY CIRCLE X/Y BASED ON TRANSFORMED POINTS
+				settings.colorPicker.tinyCircle.x, settings.colorPicker.tinyCircle.y = x, y
+
+			love.graphics.pop()
 		end
 	elseif game.state == "LOAD_SCREEN" then
 		game.loadPlayer.rot = game.loadPlayer.rot + dt

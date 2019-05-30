@@ -68,7 +68,6 @@ function TriangleButton:new(x, y, size, rot, design, text, color, textColor)
 	self.text = text or ""
 	self.color = color or jLib.color.red
 	self.textColor = textColor or jLib.color.white
-	self.canvas = love.graphics.newCanvas(self.size, self.size)
 	self.vert = {}
 end
 
@@ -78,15 +77,30 @@ function TriangleButton:draw()
 	local tx, ty = cc, cc - ((math.sqrt(3)/3) * self.size) + nudge
 	local rx, ry = cc + (self.size / 2), cc + ((math.sqrt(3)/6) * self.size) + nudge
 	local lx, ly = cc - (self.size / 2), cc + ((math.sqrt(3)/6) * self.size) + nudge
-
-	love.graphics.setCanvas(self.canvas)
+	
+	love.graphics.push()
 		love.graphics.setColor(self.color)
+		
+		--ROTATE AROUND CENTER
+		love.graphics.translate(self.x, self.y)
+		love.graphics.rotate(self.rot)
+		love.graphics.translate(-self.x, -self.y)
+		
+		--TRANSLATE TO PASSED X, Y
+		love.graphics.translate(self.x, self.y)
+		
+		--CENTER POLYGON
+		love.graphics.translate(-cc, -cc)
+		
+		--NUDGE UP
+		love.graphics.translate(0, -nudge)
+		
+		--DRAW TRIANGLE AND TEXT
 		love.graphics.polygon(self.design, tx, ty, rx, ry, lx, ly)
 		love.graphics.setColor(self.textColor)
 		love.graphics.printf(self.text, game.font, self.size / 2, self.size / 2, jLib.printf.nowrap, "left", 0)
-	love.graphics.setCanvas()
-	
-	love.graphics.draw(self.canvas, self.x, self.y, self.rot, 1, 1, self.size / 2, (self.size / 2) + (self.size / 10)) --That last bit is nudge
+		
+	love.graphics.pop()
 end
 
 function TriangleButton:update(dt)
@@ -119,18 +133,29 @@ end
 function RingButton:draw()
 	local scale = (.2 * game.scale) * ((self.r * 2) / game.font:getHeight()) * (4.5 / self.text:len())
 	
-	love.graphics.stencil(function() love.graphics.circle(self.design, self.x, self.y, self.r - (self.r * .2)) end)
-	love.graphics.setStencilTest("less", 1)
-	
-	love.graphics.setColor(self.color)
-	love.graphics.circle(self.design, self.x, self.y, self.r)
-	if self.design == "fill" then 
-		love.graphics.setColor(self.textColor) 
-	else
-		love.graphics.setColor(self.color) 
-	end
-	love.graphics.printf(self.text, game.font, self.x, self.y, jLib.printf.nowrap, "left", 0, scale, scale, game.font:getWidth(self.text) / 2, game.font:getHeight() / 2)
-	love.graphics.setStencilTest()
+	love.graphics.push()
+		
+		--ROTATE CIRCLE AROUND CENTER OF TRIANGLE
+		love.graphics.translate(settings.colorPicker.triangle.x, settings.colorPicker.triangle.y)
+		love.graphics.rotate(settings.colorPicker.triangle.rot)
+		love.graphics.translate(-settings.colorPicker.triangle.x, -settings.colorPicker.triangle.y)
+		
+		--CREATE CIRCLE STENCIL
+		love.graphics.stencil(function() love.graphics.circle(self.design, self.x, self.y, self.r - (self.r * .2)) end)
+		love.graphics.setStencilTest("less", 1)
+		
+		--DRAW CIRCLE, WITH STENCIL PORTION CUT OUT
+		love.graphics.setColor(self.color)
+		love.graphics.circle(self.design, self.x, self.y, self.r)
+		
+		--DRAW TEXT
+		if self.design == "fill" then love.graphics.setColor(self.textColor) else love.graphics.setColor(self.color) end
+		love.graphics.printf(self.text, game.font, self.x, self.y, jLib.printf.nowrap, "left", 0, scale, scale, game.font:getWidth(self.text) / 2, game.font:getHeight() / 2)
+		
+		--UNDO STENCIL
+		love.graphics.setStencilTest()
+		
+	love.graphics.pop()
 end
 
 function RingButton:update(dt)
