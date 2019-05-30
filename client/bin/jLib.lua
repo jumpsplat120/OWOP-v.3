@@ -89,8 +89,8 @@ function jLib.destringify(str)
 end
 
 --Map one range to another
-function jLib.map(from1, from2, to1, to2, input)
-	return to2 + (input-from1)*(to2-to1)/(from2-from1)
+function jLib.map(fromMin, fromMax, toMin, toMax, input)
+	return (input - fromMin) * (toMax - toMin) / (fromMax - fromMin) + toMin
 end
 
 function jLib.isEven(num)

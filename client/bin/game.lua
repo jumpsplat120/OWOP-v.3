@@ -171,6 +171,11 @@ function game.update(dt)
 		settings.colorPicker.triangle:update(dt)	
 		if jLib.isColliding(jLib.mouse, settings.colorPicker.ring, "circle")  and not (jLib.isColliding(jLib.mouse, settings.colorPicker.innerCircle, "circle")) and love.mouse.isDown(1) then
 			settings.colorPicker.triangle.rot = jLib.getDir(settings.colorPicker.triangle.x, settings.colorPicker.triangle.y, jLib.mouse.x, jLib.mouse.y)
+			
+			--Goes from neg half pi to pi + halfpi
+			local min, max = -(math.pi * .5), math.pi + (math.pi * .5)
+			local rgb = jLib.map(1, 3, 1, 10, 2)
+			print(settings.colorPicker.triangle.rot, rgb)
 		end
 		if jLib.isInside(settings.colorPicker.triangle.vert, jLib.mouse.x, jLib.mouse.y) and love.mouse.isDown(1) then
 			local x, y
