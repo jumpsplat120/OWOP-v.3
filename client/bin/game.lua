@@ -172,10 +172,7 @@ function game.update(dt)
 		if jLib.isColliding(jLib.mouse, settings.colorPicker.ring, "circle")  and not (jLib.isColliding(jLib.mouse, settings.colorPicker.innerCircle, "circle")) and love.mouse.isDown(1) then
 			settings.colorPicker.triangle.rot = jLib.getDir(settings.colorPicker.triangle.x, settings.colorPicker.triangle.y, jLib.mouse.x, jLib.mouse.y)
 			
-			--Goes from neg half pi to pi + halfpi
-			local min, max = -(math.pi * .5), math.pi + (math.pi * .5)
-			local rgb = jLib.map(1, 3, 1, 10, 2)
-			print(settings.colorPicker.triangle.rot, rgb)
+			--CURRENT GOAL: Put in rotation, get out a color based on the rotation. Study the way one value in RBG changes when going around a color picker wheel
 		end
 		if jLib.isInside(settings.colorPicker.triangle.vert, jLib.mouse.x, jLib.mouse.y) and love.mouse.isDown(1) then
 			local x, y
@@ -183,7 +180,7 @@ function game.update(dt)
 			love.graphics.push()
 				--APPLY ROTATION TOO COORDS
 				love.graphics.translate(settings.colorPicker.triangle.x, settings.colorPicker.triangle.y)
-				love.graphics.rotate(settings.colorPicker.triangle.rot + math.pi) --Why do I have to add pi??
+				love.graphics.rotate(settings.colorPicker.triangle.rot)
 				love.graphics.translate(-settings.colorPicker.triangle.x, -settings.colorPicker.triangle.y)
 				
 				--APPLY TRANSFORMATION TO MOUSE COORDS
