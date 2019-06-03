@@ -175,7 +175,7 @@ function game.update(dt)
 		end
 			
 			--CURRENT GOAL: Put in rotation, get out a color based on the rotation. Study the way one value in RBG changes when going around a color picker wheel
-		if jLib.isInside(settings.colorPicker.triangle.vert, jLib.mouse.x, jLib.mouse.y) and love.mouse.isDown(1) and not settings.colorPicker.ring.isClicked then
+		if settings.colorPicker.triangle.isClicked and not settings.colorPicker.ring.isClicked then
 			local x, y
 			
 			love.graphics.push()
@@ -185,8 +185,9 @@ function game.update(dt)
 				love.graphics.translate(-settings.colorPicker.triangle.x, -settings.colorPicker.triangle.y)
 				
 				--APPLY TRANSFORMATION TO MOUSE COORDS
-				x, y = love.graphics.transformPoint(jLib.mouse.x, jLib.mouse.y)
-				
+				x, y = love.graphics.transformPoint(jLib.mouse.x, jLib.mouse.y)	
+			love.graphics.pop()	
+			
 				--MODIFY TINY CIRCLE X/Y BASED ON TRANSFORMED POINTS
 				settings.colorPicker.tinyCircle.x, settings.colorPicker.tinyCircle.y = x, y
 

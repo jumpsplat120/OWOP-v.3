@@ -30,6 +30,8 @@ function love.mousepressed(x, y, button)
 	elseif game.state == "SETTINGS" then
 		if jLib.isColliding(jLib.mouse, settings.colorPicker.ring, "circle")  and not (jLib.isColliding(jLib.mouse, settings.colorPicker.innerCircle, "circle")) then
 			settings.colorPicker.ring.isClicked = true
+		elseif jLib.isInside(settings.colorPicker.triangle.vert, jLib.mouse.x, jLib.mouse.y) then
+			settings.colorPicker.triangle.isClicked = true
 		end
 	end
 end
@@ -61,9 +63,11 @@ function love.mousereleased(x, y, button)
 			game.resize.update()
 		elseif game.modal == "SETTINGS" then
 			settings.colorPicker.ring.isClicked = false
+			settings.colorPicker.triangle.isClicked = false
 		end
 	elseif game.state == "SETTINGS" then
 		settings.colorPicker.ring.isClicked = false
+		settings.colorPicker.triangle.isClicked = false
 	end
 end
 

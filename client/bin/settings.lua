@@ -47,3 +47,4 @@ end
 --------------Assigning Misc. Values--------------
 
 settings.colorPicker.ring.isClicked = false
+settings.colorPicker.triangle.isClicked = false
