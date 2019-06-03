@@ -169,18 +169,19 @@ function game.update(dt)
 		end
 	elseif game.state == "SETTINGS" then
 		settings.colorPicker.triangle:update(dt)	
-		if jLib.isColliding(jLib.mouse, settings.colorPicker.ring, "circle")  and not (jLib.isColliding(jLib.mouse, settings.colorPicker.innerCircle, "circle")) and love.mouse.isDown(1) then
+		
+		if settings.colorPicker.ring.isClicked then
 			settings.colorPicker.triangle.rot = jLib.getDir(settings.colorPicker.triangle.x, settings.colorPicker.triangle.y, jLib.mouse.x, jLib.mouse.y)
+		end
 			
 			--CURRENT GOAL: Put in rotation, get out a color based on the rotation. Study the way one value in RBG changes when going around a color picker wheel
-		end
-		if jLib.isInside(settings.colorPicker.triangle.vert, jLib.mouse.x, jLib.mouse.y) and love.mouse.isDown(1) then
+		if jLib.isInside(settings.colorPicker.triangle.vert, jLib.mouse.x, jLib.mouse.y) and love.mouse.isDown(1) and not settings.colorPicker.ring.isClicked then
 			local x, y
 			
 			love.graphics.push()
 				--APPLY ROTATION TOO COORDS
 				love.graphics.translate(settings.colorPicker.triangle.x, settings.colorPicker.triangle.y)
-				love.graphics.rotate(settings.colorPicker.triangle.rot)
+				love.graphics.rotate(-settings.colorPicker.triangle.rot)
 				love.graphics.translate(-settings.colorPicker.triangle.x, -settings.colorPicker.triangle.y)
 				
 				--APPLY TRANSFORMATION TO MOUSE COORDS

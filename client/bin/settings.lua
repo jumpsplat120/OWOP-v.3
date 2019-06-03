@@ -35,7 +35,7 @@ settings.colorPicker.update = function(x, y, scale) --Multiplier; scale of 1 is 
 	
 	local size = scale * 200
 	
-	settings.colorPicker.ring, settings.colorPicker.innerCircle, settings.colorPicker.triangle, settings.colorPicker.tinyCircle = nil, nil, nil, nil --NEW SOLUJTION THAT ISN'T THIS; Object resets on resizing screen
+	settings.colorPicker.ring, settings.colorPicker.innerCircle, settings.colorPicker.triangle, settings.colorPicker.tinyCircle = nil, nil, nil, nil --NEW SOLUTION THAT ISN'T THIS; Object resets on resizing screen
 	
 	settings.colorPicker.ring = CircleButton(x, y, size * .5, "fill", "", jLib.color.red)
 	settings.colorPicker.innerCircle = CircleButton(x, y, size * .4, "fill", "", jLib.color.white)
@@ -43,3 +43,7 @@ settings.colorPicker.update = function(x, y, scale) --Multiplier; scale of 1 is 
 	settings.colorPicker.tinyCircle = RingButton(x, y, size * 0.025, "fill", "", jLib.color.grey)
 	
 end
+
+--------------Assigning Misc. Values--------------
+
+settings.colorPicker.ring.isClicked = false
