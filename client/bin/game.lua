@@ -177,7 +177,12 @@ function game.update(dt)
 		
 		if settings.colorPicker.ring.isClicked then
 			local degree, r, g, b
+			
+			--GET ROTATION OF TRIANGLE BASED ON LINE DRAWN FROM CENTER OF TRIANGLE TO MOUSE X/Y
 			settings.colorPicker.triangle.rot = jLib.getDir(settings.colorPicker.triangle.x, settings.colorPicker.triangle.y, jLib.mouse.x, jLib.mouse.y)
+			
+			print(settings.colorPicker.triangle.rot)
+			--CONVERT FROM RADIANS TO DEGREES
 			degree = jLib.map(-math.pi * .5, math.pi * 1.5, 0, 360, settings.colorPicker.triangle.rot)
 			
 			--CALCULATE RED BASED ON ROTATION
@@ -216,9 +221,9 @@ function game.update(dt)
 			end
 			
 			--CONVERT FROM 255/0 SCALE to 1/0 SCALE
-			r = jLib.map(0, 255, 0, 1, r)
-			g = jLib.map(0, 255, 0, 1, g)
-			b = jLib.map(0, 255, 0, 1, b)
+			r = r / 255
+			g = g / 255
+			b = b / 255
 			
 			--PUT COLOR INTO COLORPICKER
 			settings.colorPicker.color = {r, g, b}
@@ -270,30 +275,15 @@ function game.update(dt)
 			
 			--MODIFY TINY CIRCLE X/Y BASED ON TRANSFORMED POINTS
 			settings.colorPicker.tinyCircle.x, settings.colorPicker.tinyCircle.y = x, y
-			
-			local ryt, ryb, rxl, rxr
+
 			local s, v, color
+			--[[ 	What I probably want to end up doing is taking the RGB, converting it into HSV,
+					returning the HSV table, reinputting the HSV table with the modifications that
+					I want, and turning it back into RGB. Or something like that.
+			--]]
 			
 			--STORE CURRENT COLOR SO AS TO NOT DESTRUCTIVELY MODIFY IT
 			color = settings.colorPicker.color
-			
-			--GET THE RELATIVE TOP/BOTTOM/LEFT/RIGHT LOCATIONS OF THE TRIANGLE
-			ryt = triangle.y + (triangle.size * .5)
-			ryb = triangle.y - (triangle.size * .5)
-			
-			rxl = triangle.x + (triangle.size * .5)
-			rxr = triangle.x + (triangle.size * .5)
-			
-			--CALCULATE SATURATION AND "VALUE" VALUES
-			s = jLib.map(ryb, ryt, 0, 1, iy)
-			v = jLib.map(rxl, rxr, 0, 255, ix)
-			
-			--MODIFY COLOR VAR BY THESE VALUES
-			color[1] = (color[1] * 255) * (v / 255)
-			color[2] = (color[2] * 255) * (v / 255)
-			color[3] = (color[3] * 255) * (v / 255)
-			
-			game.player.color = {color[1] / 255, color[2] / 255, color[3] / 255}
 			
 		end
 	elseif game.state == "LOAD_SCREEN" then

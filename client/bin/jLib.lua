@@ -11,7 +11,7 @@ test = {}
 	\ \________\ \_______\ \__\ \_______\
 	 \|________|\|_______|\|__|\|_______|
 
-	Made by Antimony Apodaca - v0.2
+	Made by Antimony Apodaca - v0.3
 Unlicense License - http://unlicense.org/
 
 I'm bad at versioning well, but the most updated
@@ -228,4 +228,59 @@ end
 --Returns direction in radians. Assumes pointing straight up
 function jLib.getDir(fromX, fromY, toX, toY)
 	return math.atan2(toY - fromY, toX - fromX) + (math.pi * .5)
+end
+
+-- Returns the HSV equivalent of the given RGB-defined color. Taken from here: https://gist.github.com/GigsD4X/8513963 and modified by me
+function jLib.RGBtoHSV(r, g, b)
+	--HUE, SATURATION, VALUE, VALUE_DELTA, MIN_VALUE, MAX_VALUE
+	local h, s, v
+	local vdt, min, max
+	
+	min = math.min(r, g, b)
+	max = math.max(r, g, b)
+	
+	v = max
+	vdt = max - min
+
+	if not max == 0 then
+		s = vdt / max
+		
+		if r == max then
+			h = (g - b) / vdt
+		elseif g == max then
+			h = 2 + (b - r) / vdt
+		else
+			h = 4 + (r - g) / vdt
+		end
+		
+		h = h * 60
+		
+		if h < 0 then h = h + 360 end
+		
+		return h, s, v
+	else return -1, 0, v end
+end
+
+-- Returns the RGB equivalent of the given HSV-defined color. Taken from here: https://gist.github.com/GigsD4X/8513963 and modified by me
+function jLib.HSVtoRGB(h, s, v)
+	if s == 0 then return v, v, v end
+	
+	--HUE_SECTOR, HUE_SECTOR_OFFSET
+	local hsec, hsecoff
+	local p, q, t
+	
+	hsec = math.floor(h / 60)
+	hsecoff = (h / 60) - hsec
+
+	p = value * (1 - s)
+	q = value * (1 - s * hsecoff)
+	t = value * (1 - s * (1 - hsecoff))
+
+	if hsec == 0 then return v, t, p
+	elseif hsec == 1 then return q, v, p
+	elseif hsec == 2 then return p, v, t
+	elseif hsec == 3 then return p, q, v
+	elseif hsec == 4 then return t, p, v
+	elseif hsec == 5 then return v, p, q
+	end
 end
