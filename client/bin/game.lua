@@ -128,13 +128,18 @@ function game.draw()
 		end
 	elseif game.state == "SETTINGS" then
 		settings.colorPicker.draw()
+		love.graphics.setColor(game.player.color)
+		love.graphics.rectangle("fill", 50, 50, 50, 50)
+		love.graphics.setColor(jLib.color.white)
 	elseif game.state == "LOAD_SCREEN" then
 		local size = .2 * game.scale
 		love.graphics.setColor(game.player.color)
 		love.graphics.printf("Loading...", game.font, (jLib.window.width / 2) - ((game.font:getWidth("Loading...") * size) / 2), 5, jLib.window.width / size, "left", 0, size)
 		game.loadPlayer:draw()
 	elseif game.state == "INGAME" then
-		game.player:draw()
+		camera:set()
+			game.player:draw()
+		camera:unset()
 	elseif game.state == "FRIENDS_MENU" then
 		love.graphics.setColor(jLib.color.black)
 		love.graphics.print("friends menu")
@@ -168,30 +173,128 @@ function game.update(dt)
 			game.hoverTimer = 4.5
 		end
 	elseif game.state == "SETTINGS" then
-		settings.colorPicker.triangle:update(dt)	
+		settings.colorPicker.triangle:update(dt)
 		
 		if settings.colorPicker.ring.isClicked then
+			local degree, r, g, b
 			settings.colorPicker.triangle.rot = jLib.getDir(settings.colorPicker.triangle.x, settings.colorPicker.triangle.y, jLib.mouse.x, jLib.mouse.y)
-		end
+			degree = jLib.map(-math.pi * .5, math.pi * 1.5, 0, 360, settings.colorPicker.triangle.rot)
 			
-			--CURRENT GOAL: Put in rotation, get out a color based on the rotation. Study the way one value in RBG changes when going around a color picker wheel
-		if settings.colorPicker.triangle.isClicked and not settings.colorPicker.ring.isClicked then
-			local x, y
+			--CALCULATE RED BASED ON ROTATION
+			if degree >= 15 and degree <= 150 then
+				r = 255
+			elseif degree > 150 and degree < 210 then
+				r = math.floor(jLib.map(150, 210, 255, 0, degree))
+			elseif degree < 15 then
+				r = math.floor(jLib.map(15, 0, 255, 196, degree))
+			elseif degree > 310 then
+				r = math.floor(jLib.map(360, 310, 195, 0, degree))
+			else
+				r = 0
+			end
+			
+			--CALCULATE GREEN BASED ON ROTATION
+			if degree <= 270 and degree >= 150 then
+				g = 255
+			elseif degree > 270 and degree < 310 then
+				g = math.floor(jLib.map(270, 310, 255, 0, degree))
+			elseif degree < 150 and degree > 90 then
+				g = math.floor(jLib.map(150, 90, 255, 0, degree))
+			else
+				g = 0
+			end
+			
+			--CALCULATE BLUE BASED ON ROTATION
+			if degree <= 15 or degree >= 270 then
+				b = 255
+			elseif degree > 15 and degree < 90 then
+				b = math.floor(jLib.map(15, 90, 255, 0, degree))
+			elseif degree > 210 and degree < 270 then
+				b = math.floor(jLib.map(210, 270, 0, 255, degree))
+			else
+				b = 0
+			end
+			
+			--CONVERT FROM 255/0 SCALE to 1/0 SCALE
+			r = jLib.map(0, 255, 0, 1, r)
+			g = jLib.map(0, 255, 0, 1, g)
+			b = jLib.map(0, 255, 0, 1, b)
+			
+			--PUT COLOR INTO COLORPICKER
+			settings.colorPicker.color = {r, g, b}
+			
+			--ALSO CHANGE GAME.PLAYER.COLOR
+			game.player.color = settings.colorPicker.color
+		end
+		
+		if settings.colorPicker.triangle.isClicked then
+			local x, y, ix, iy
+			local triangle = settings.colorPicker.triangle
+			
+			--IF MOUSE IS NOT IN TRIANGLE
+			if not jLib.isInside(triangle.vert, jLib.mouse.x, jLib.mouse.y) then
+			
+				local line2 = {jLib.mouse.x, jLib.mouse.y, triangle.x, triangle.y}
+				
+				--GET VALUES OF TRIANGLE TO FORM LINE
+				for i = 1, #triangle.vert, 2 do
+					local x1, y1 = triangle.vert[i], triangle.vert[i + 1]
+					local x2, y2
+					
+					if i + 1 >= #triangle.vert then
+						x2, y2 = triangle.vert[1], triangle.vert[2]
+					else
+						x2, y2 = triangle.vert[i + 2], triangle.vert[i + 3]
+					end
+					
+					--GET INTERSECTION POINT OF TRIANGLE LINE AND MOUSE-TO-CENTER LINE
+					ix, iy = jLib.intersectsAt({x1, y1, x2, y2}, line2)
+					
+					--IF INTERSECTION POINT EXISTS, BREAK FROM LOOP
+					if ix and iy then break end
+				end
+			end
+			
+			--IF MOUSE IS INSIDE TRIANGLE, ASSIGN ix AND iy VALUES OF MOUSE x AND y
+			if not ix and not iy then ix, iy = jLib.mouse.x, jLib.mouse.y end
 			
 			love.graphics.push()
 				--APPLY ROTATION TOO COORDS
-				love.graphics.translate(settings.colorPicker.triangle.x, settings.colorPicker.triangle.y)
-				love.graphics.rotate(-settings.colorPicker.triangle.rot)
-				love.graphics.translate(-settings.colorPicker.triangle.x, -settings.colorPicker.triangle.y)
+				love.graphics.translate(triangle.x, triangle.y)
+				love.graphics.rotate(-triangle.rot)
+				love.graphics.translate(-triangle.x, -triangle.y)
 				
-				--APPLY TRANSFORMATION TO MOUSE COORDS
-				x, y = love.graphics.transformPoint(jLib.mouse.x, jLib.mouse.y)	
-			love.graphics.pop()	
-			
-				--MODIFY TINY CIRCLE X/Y BASED ON TRANSFORMED POINTS
-				settings.colorPicker.tinyCircle.x, settings.colorPicker.tinyCircle.y = x, y
-
+				--APPLY TRANSFORMATION TO INTERSECTION COORDS
+				x, y = love.graphics.transformPoint(ix, iy)	
 			love.graphics.pop()
+			
+			--MODIFY TINY CIRCLE X/Y BASED ON TRANSFORMED POINTS
+			settings.colorPicker.tinyCircle.x, settings.colorPicker.tinyCircle.y = x, y
+			
+			local ryt, ryb, rxl, rxr
+			local s, v, color
+			
+			--STORE CURRENT COLOR SO AS TO NOT DESTRUCTIVELY MODIFY IT
+			color = settings.colorPicker.color
+			
+			--GET THE RELATIVE TOP/BOTTOM/LEFT/RIGHT LOCATIONS OF THE TRIANGLE
+			ryt = triangle.y + (triangle.size * .5)
+			ryb = triangle.y - (triangle.size * .5)
+			
+			rxl = triangle.x + (triangle.size * .5)
+			rxr = triangle.x + (triangle.size * .5)
+			
+			--CALCULATE SATURATION AND "VALUE" VALUES
+			s = jLib.map(ryb, ryt, 0, 1, iy)
+			v = jLib.map(rxl, rxr, 0, 255, ix)
+			
+			--MODIFY COLOR VAR BY THESE VALUES
+			color[1] = (color[1] * 255) * (v / 255)
+			color[2] = (color[2] * 255) * (v / 255)
+			color[3] = (color[3] * 255) * (v / 255)
+			
+			game.player.color = {color[1] / 255, color[2] / 255, color[3] / 255}
+			
 		end
 	elseif game.state == "LOAD_SCREEN" then
 		game.loadPlayer.rot = game.loadPlayer.rot + dt
@@ -252,7 +355,6 @@ function game.resize.update()
 			game.escapeModal.settingsButton.regular.x, game.escapeModal.settingsButton.regular.y = cw, ch - (h * .5) - (margin * .5)
 			game.escapeModal.friendsButton.regular.x, game.escapeModal.friendsButton.regular.y = cw, ch + (h * .5) + (margin * .5)
 			game.escapeModal.escapeButton.regular.x, game.escapeModal.escapeButton.regular.y = cw, ch + (h * 1.5) + (margin * 1.5)
-			
 			game.escapeModal.resumeButton.hover.x, game.escapeModal.resumeButton.hover.y = cw, ch - (h * 1.5) - (margin * 1.5)
 			game.escapeModal.settingsButton.hover.x, game.escapeModal.settingsButton.hover.y = cw, ch - (h * .5) - (margin * .5)
 			game.escapeModal.friendsButton.hover.x, game.escapeModal.friendsButton.hover.y = cw, ch + (h * .5) + (margin * .5)
@@ -264,7 +366,7 @@ function game.resize.update()
 			game.escapeModal.escapeButton.click.x, game.escapeModal.escapeButton.click.y = cw, ch + (h * 1.5) + (margin * 1.5)
 		end
 	elseif game.state == "SETTINGS" then
-		settings.colorPicker.update(nil,nil,1 * game.scale)
+		settings.colorPicker.update(1 * game.scale)
 	end
 	
 end

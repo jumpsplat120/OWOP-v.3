@@ -42,7 +42,8 @@ function love.mousereleased(x, y, button)
 	if game.state == "START_MENU" then
 		if jLib.isColliding(jLib.mouse, game.startButton.regular) then 
 			game.state = "INGAME"
-		elseif jLib.isColliding(jLib.mouse, game.settingsButton.regular) then 
+		elseif jLib.isColliding(jLib.mouse, game.settingsButton.regular) then
+			settings.colorPicker.color = game.player.color
 			game.state = "SETTINGS"
 		elseif jLib.isColliding(jLib.mouse, game.friendsButton.regular) then 
 			game.state = "FRIENDS_MENU" 
@@ -64,6 +65,7 @@ function love.mousereleased(x, y, button)
 		elseif game.modal == "SETTINGS" then
 			settings.colorPicker.ring.isClicked = false
 			settings.colorPicker.triangle.isClicked = false
+			settings.colorPicker.color = game.player.color
 		end
 	elseif game.state == "SETTINGS" then
 		settings.colorPicker.ring.isClicked = false

@@ -20,9 +20,7 @@ function love.load()
 end
 
 function love.draw()
-	camera:set()
-		game.draw()
-	camera:unset()
+	game.draw()
 	game.ui.draw()
 	jLib.draw()
 end

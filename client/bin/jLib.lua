@@ -11,7 +11,7 @@ test = {}
 	\ \________\ \_______\ \__\ \_______\
 	 \|________|\|_______|\|__|\|_______|
 
-	Made by Antimony Apodaca - v0.1
+	Made by Antimony Apodaca - v0.2
 Unlicense License - http://unlicense.org/
 
 I'm bad at versioning well, but the most updated
@@ -56,12 +56,12 @@ jLib.mouse.r          = 1
 
 -----------------------------FUNCTIONS-----------------------------
 
---For use in LOVE; place in love.update()
+--For use in LOVE; place in love.update() after all other updated elements.
 function jLib.update(dt)
 	jLib.mouse.x, jLib.mouse.y = love.mouse.getPosition()
 end
 
---For use in LOVE; place in love.draw()
+--For use in LOVE; place in love.draw() after all other drawn elements.
 function jLib.draw()
 	if jLib.isError then 
 		love.graphics.clear()
@@ -93,7 +93,9 @@ function jLib.map(fromMin, fromMax, toMin, toMax, input)
 	return (input - fromMin) * (toMax - toMin) / (fromMax - fromMin) + toMin
 end
 
+--Helper function to determine if a number is even or not
 function jLib.isEven(num)
+	assert(type(num) == "number", "jLib.isEven() has thrown an error; passed argument was not a number.")
 	return num % 2 == 0
 end
 
@@ -162,6 +164,65 @@ function jLib.isInside(obj, x, y)
 	end
  
 	return  inside_flag
+end
+
+--Determines whether two lines are intersecting or not. Does not return where they intersect, however. Also runs as a part of the intersectsAt function. Used to reduce the amount of calculations made. The 2nd argument can be either "segment" or "ray". A segment has both a start and end point, whereas a ray only has the start of a line, and extends infinitely in one direction. Assumes segment by default.
+function jLib.isIntersecting(line1, line2, lineType)
+	--ERROR CHECKING
+	assert(#line1 == 4, "jLib.intersectsAt() has thrown an error; line1 parameter has an incorrect amount of x/y values.")
+	assert(#line2 == 4, "jLib.intersectsAt() has thrown an error; line2 parameter has an incorrect amount of x/y values.")
+
+	--LOCAL VALUES
+	local t, u
+	local x1, y1, x2, y2 = line1[1], line1[2], line1[3], line1[4]
+	local x3, y3, x4, y4 = line2[1], line2[2], line2[3], line2[4]
+	lineType = lineType or "segment"
+	
+	--CALCULATING T
+	t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4))
+	
+	--IF T IS ZERO LINES ARE PARALLEL
+	if t == 0 then return false end
+	
+	--CALCULATING U
+	u = -(((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / ((x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4)))
+	
+	--DETERMINE IF LINES ARE INTERSECTING, AND IF THEY ARE, RETURN TRUTHY
+	if t > 0 and t < 1 then
+		if lineType == "segment" then
+			if u > 0 and u < 1 then 
+				return t, u, x1, x2, x3, x4, y1, y2, y3, y4
+			else 
+				return false 
+			end
+		else
+			if u > 0 then 
+				return t, u, x1, x2, x3, x4, y1, y2, y3, y4
+			else 
+				return false 
+			end
+		end
+	else
+		return false
+	end
+end
+
+--Returns the x and y of an intersection. If there is no intersection between the two line segments, then returns false. The 2nd argument can be either "segment" or "ray". A segment has both a start and end point, whereas a ray only has the start of a line, and extends infinitely in one direction. Assumes segment by default.
+function jLib.intersectsAt(line1, line2, lineType)
+	
+	--ERROR CHECKING
+	assert(#line1 == 4, "jLib.intersectsAt() has thrown an error; line1 parameter has an incorrect amount of x/y values.")
+	assert(#line2 == 4, "jLib.intersectsAt() has thrown an error; line2 parameter has an incorrect amount of x/y values.")
+	
+	--DETERMINE IF LINES ARE INTERSECTING AT ALL
+	t, u, x1, x2, x3, x4, y1, y2, y3, y4 = jLib.isIntersecting(line1, line2, lineType)
+	
+	--IF LINES ARE INTERSECTING, CALCULATE INTESECTION POINT
+	if t then
+		return x1 + t * (x2 - x1), y1 + t * (y2 - y1)
+	else
+		return false
+	end
 end
 
 --Returns direction in radians. Assumes pointing straight up

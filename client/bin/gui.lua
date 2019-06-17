@@ -100,6 +100,14 @@ function TriangleButton:draw()
 		love.graphics.setColor(self.textColor)
 		love.graphics.printf(self.text, game.font, self.size / 2, self.size / 2, jLib.printf.nowrap, "left", 0)
 		
+		--MODIFY VERTEX POINTS BASED ON ROTATION/TRANSFORM
+		tx, ty = love.graphics.transformPoint(tx, ty)
+		rx, ry = love.graphics.transformPoint(rx, ry)
+		lx, ly = love.graphics.transformPoint(lx, ly)
+		
+		--ASSIGN VERTEX POINTS TO VERT TABLE
+		self.vert = {tx, ty, rx, ry, lx, ly}
+
 	love.graphics.pop()
 end
 
@@ -119,7 +127,7 @@ function TriangleButton:update(dt)
 	local rx, ry = self.x + (self.size / 2), self.y + ((math.sqrt(3)/6) * self.size)
 	local lx, ly = self.x - (self.size / 2), self.y + ((math.sqrt(3)/6) * self.size)
 	
-	self.vert = {tx, ty, rx, ry, lx, ly}
+	--self.vert = {tx, ty, rx, ry, lx, ly}
 end
 
 ------------------Ring Button------------------
