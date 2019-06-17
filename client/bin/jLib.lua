@@ -241,8 +241,8 @@ function jLib.RGBtoHSV(r, g, b)
 	
 	v = max
 	vdt = max - min
-
-	if not max == 0 then
+	
+	if not (max == 0) then
 		s = vdt / max
 		
 		if r == max then
@@ -272,9 +272,9 @@ function jLib.HSVtoRGB(h, s, v)
 	hsec = math.floor(h / 60)
 	hsecoff = (h / 60) - hsec
 
-	p = value * (1 - s)
-	q = value * (1 - s * hsecoff)
-	t = value * (1 - s * (1 - hsecoff))
+	p = v * (1 - s)
+	q = v * (1 - s * hsecoff)
+	t = v * (1 - s * (1 - hsecoff))
 
 	if hsec == 0 then return v, t, p
 	elseif hsec == 1 then return q, v, p

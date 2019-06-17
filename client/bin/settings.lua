@@ -20,7 +20,7 @@ settings.colorPicker.line = love.graphics.newImage("assets/line.png")
 
 settings.colorPicker.x, settings.colorPicker.y = 0, 0
 
-settings.colorPicker.color = jLib.color.red
+settings.colorPicker.tint = jLib.color.red
 
 --------------Define Shapes through Constructor Classes (gui.lua)--------------
 
@@ -39,7 +39,7 @@ settings.colorPicker.draw = function()
 	--DRAW TEXTURES
 	love.graphics.draw(settings.colorPicker.ringTex, settings.colorPicker.x, settings.colorPicker.y, 0, .5 * game.scale, .5 * game.scale, 200, 200)
 	love.graphics.draw(settings.colorPicker.triangleTex, settings.colorPicker.x, settings.colorPicker.y, settings.colorPicker.triangle.rot, .5 * game.scale, .5 * game.scale, 160, 160)
-	love.graphics.setColor(game.player.color)
+	love.graphics.setColor(settings.colorPicker.tint)
 	love.graphics.draw(settings.colorPicker.triangleTint, settings.colorPicker.x, settings.colorPicker.y, settings.colorPicker.triangle.rot, .5 * game.scale, .5 * game.scale, 160, 160)
 	love.graphics.setColor(jLib.color.white)
 	love.graphics.draw(settings.colorPicker.line, settings.colorPicker.x, settings.colorPicker.y, settings.colorPicker.triangle.rot, .5 * game.scale, .5 * game.scale, 30, 200)

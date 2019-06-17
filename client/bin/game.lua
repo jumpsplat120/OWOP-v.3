@@ -175,13 +175,13 @@ function game.update(dt)
 	elseif game.state == "SETTINGS" then
 		settings.colorPicker.triangle:update(dt)
 		
+		local degree, r, g, b, hue, sat, val
+		
 		if settings.colorPicker.ring.isClicked then
-			local degree, r, g, b
 			
 			--GET ROTATION OF TRIANGLE BASED ON LINE DRAWN FROM CENTER OF TRIANGLE TO MOUSE X/Y
 			settings.colorPicker.triangle.rot = jLib.getDir(settings.colorPicker.triangle.x, settings.colorPicker.triangle.y, jLib.mouse.x, jLib.mouse.y)
 			
-			print(settings.colorPicker.triangle.rot)
 			--CONVERT FROM RADIANS TO DEGREES
 			degree = jLib.map(-math.pi * .5, math.pi * 1.5, 0, 360, settings.colorPicker.triangle.rot)
 			
@@ -225,12 +225,14 @@ function game.update(dt)
 			g = g / 255
 			b = b / 255
 			
-			--PUT COLOR INTO COLORPICKER
-			settings.colorPicker.color = {r, g, b}
-			
-			--ALSO CHANGE GAME.PLAYER.COLOR
-			game.player.color = settings.colorPicker.color
+			--SET THE TINT BASED OFF OF ONLY THE HUE
+			settings.colorPicker.tint = {r, g, b}
 		end
+		
+		--SET RGB TO RGB OR CURRENT GAME.PLAYER.COLOR
+		r = r or game.player.color[1]
+		g = g or game.player.color[2]
+		b = b or game.player.color[3]
 		
 		if settings.colorPicker.triangle.isClicked then
 			local x, y, ix, iy
@@ -276,16 +278,28 @@ function game.update(dt)
 			--MODIFY TINY CIRCLE X/Y BASED ON TRANSFORMED POINTS
 			settings.colorPicker.tinyCircle.x, settings.colorPicker.tinyCircle.y = x, y
 
-			local s, v, color
 			--[[ 	What I probably want to end up doing is taking the RGB, converting it into HSV,
 					returning the HSV table, reinputting the HSV table with the modifications that
 					I want, and turning it back into RGB. Or something like that.
 			--]]
 			
-			--STORE CURRENT COLOR SO AS TO NOT DESTRUCTIVELY MODIFY IT
-			color = settings.colorPicker.color
+			hue, sat, val = jLib.RGBtoHSV(r * 255, g * 255, b * 255)
 			
+			print(x, y)
+			
+			--sat = jLib.map(btm, top, 0, 100, iy)
+			--val = jLib.map(left, right, 0, 100, ix)
+			
+			--print(hue, sat, val)
+			
+			--r, g, b = jLib.HSVtoRGB(hue, sat, val)
 		end
+		
+		--SET THE GAME.PLAYER.COLOR BASED ON THE RGB AFTER SAT AND VAL HAVE BEEN DETERMINED, OR DON'T CHANGE IF VALUES ARE BLANK
+		game.player.color[1] = r or game.player.color[1]
+		game.player.color[2] = g or game.player.color[2]
+		game.player.color[3] = b or game.player.color[3]
+		
 	elseif game.state == "LOAD_SCREEN" then
 		game.loadPlayer.rot = game.loadPlayer.rot + dt
 		game.loadPlayer.scale = jLib.map(-1,1,.75,1.5,math.sin(game.loadPlayer.rot)) * game.scale
