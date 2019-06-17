@@ -230,7 +230,7 @@ function jLib.getDir(fromX, fromY, toX, toY)
 	return math.atan2(toY - fromY, toX - fromX) + (math.pi * .5)
 end
 
--- Returns the HSV equivalent of the given RGB-defined color. Taken from here: https://gist.github.com/GigsD4X/8513963 and modified by me
+-- Returns the HSV equivalent of the given RGB-defined color. Taken from here: https://gist.github.com/GigsD4X/8513963 and modified by me. RGB = 0 - 255
 function jLib.RGBtoHSV(r, g, b)
 	--HUE, SATURATION, VALUE, VALUE_DELTA, MIN_VALUE, MAX_VALUE
 	local h, s, v
@@ -261,7 +261,7 @@ function jLib.RGBtoHSV(r, g, b)
 	else return -1, 0, v end
 end
 
--- Returns the RGB equivalent of the given HSV-defined color. Taken from here: https://gist.github.com/GigsD4X/8513963 and modified by me
+-- Returns the RGB equivalent of the given HSV-defined color. Taken from here: https://gist.github.com/GigsD4X/8513963 and modified by me H = 0 - 359, SV = 0 - 1
 function jLib.HSVtoRGB(h, s, v)
 	if s == 0 then return v, v, v end
 	

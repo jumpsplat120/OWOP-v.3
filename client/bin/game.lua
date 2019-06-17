@@ -176,6 +176,7 @@ function game.update(dt)
 		settings.colorPicker.triangle:update(dt)
 		
 		local degree, r, g, b, hue, sat, val
+		local color = {}
 		
 		if settings.colorPicker.ring.isClicked then
 			
@@ -230,9 +231,9 @@ function game.update(dt)
 		end
 		
 		--SET RGB TO RGB OR CURRENT GAME.PLAYER.COLOR
-		r = r or game.player.color[1]
-		g = g or game.player.color[2]
-		b = b or game.player.color[3]
+		color[1] = r or game.player.color[1]
+		color[2] = g or game.player.color[2]
+		color[3] = b or game.player.color[3]
 		
 		if settings.colorPicker.triangle.isClicked then
 			local x, y, ix, iy
@@ -277,28 +278,25 @@ function game.update(dt)
 			
 			--MODIFY TINY CIRCLE X/Y BASED ON TRANSFORMED POINTS
 			settings.colorPicker.tinyCircle.x, settings.colorPicker.tinyCircle.y = x, y
-
-			--[[ 	What I probably want to end up doing is taking the RGB, converting it into HSV,
-					returning the HSV table, reinputting the HSV table with the modifications that
-					I want, and turning it back into RGB. Or something like that.
-			--]]
 			
-			hue, sat, val = jLib.RGBtoHSV(r * 255, g * 255, b * 255)
+			--CONVERT HSV
+			hue, sat, val = jLib.RGBtoHSV(color[1] * 255, color[2] * 255, color[3] * 255)
 			
-			print(x, y)
+			--CALCULATE TOP, BOTTOM, LEFT AND RIGHT OF TRIANGLES BASED ON RELATIVE COORDS
+			local top, btm = triangle.y - ((math.sqrt(3)/3) * triangle.size), triangle.y + ((math.sqrt(3)/6) * triangle.size)
+			local right, left = triangle.x + (triangle.size / 2), triangle.x - (triangle.size / 2)
 			
-			--sat = jLib.map(btm, top, 0, 100, iy)
-			--val = jLib.map(left, right, 0, 100, ix)
+			--CALCULATE SAT AND VALUE
+			sat = math.min(100, math.max(0, jLib.map(btm, top, 0, 1, y)))
+			val = math.min(100, math.max(0, jLib.map(left, right, 0, 1, x)))
 			
-			--print(hue, sat, val)
-			
-			--r, g, b = jLib.HSVtoRGB(hue, sat, val)
+			color[1], color[2], color[3] = jLib.HSVtoRGB(hue, sat, val)
 		end
 		
 		--SET THE GAME.PLAYER.COLOR BASED ON THE RGB AFTER SAT AND VAL HAVE BEEN DETERMINED, OR DON'T CHANGE IF VALUES ARE BLANK
-		game.player.color[1] = r or game.player.color[1]
-		game.player.color[2] = g or game.player.color[2]
-		game.player.color[3] = b or game.player.color[3]
+		game.player.color[1] = color[1] or game.player.color[1]
+		game.player.color[2] = color[2] or game.player.color[2]
+		game.player.color[3] = color[3] or game.player.color[3]
 		
 	elseif game.state == "LOAD_SCREEN" then
 		game.loadPlayer.rot = game.loadPlayer.rot + dt
