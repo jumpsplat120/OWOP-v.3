@@ -11,6 +11,7 @@ Object = require "bin/classic"
 		 require "bin/escape_modal"
 		 require "bin/settings"
 		 require "bin/camera"
+		 require "bin/controls"
 
 --------------MAIN--------------
 

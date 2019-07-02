@@ -139,6 +139,7 @@ function game.draw()
 	elseif game.state == "INGAME" then
 		camera:set()
 			game.player:draw()
+			camera:setPosition(game.player.x - (jLib.window.width / 2), game.player.y - (jLib.window.height / 2))
 		camera:unset()
 	elseif game.state == "FRIENDS_MENU" then
 		love.graphics.setColor(jLib.color.black)
