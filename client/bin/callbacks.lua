@@ -76,14 +76,35 @@ end
 ----------Call on Any Keyboard Press----------
 
 function love.keypressed(key)
-	if key == "escape" and game.state == "INGAME" then
-		if game.modal == "ESC_MENU" then  game.modal = "NONE" else game.modal = "ESC_MENU"  end
-		game.resize.update()
-	elseif key == "escape" and game.state == "SETTINGS" then
-		game.state = "START_MENU"
-		game.resize.update()
-	elseif key == "escape" and game.state == "FRIENDS_MENU" then
-		game.state = "START_MENU"
-		game.resize.update()
+	if     key == controls.forward.key   then controls.forward.isPressed   = true
+	elseif key == controls.backwards.key then controls.backwards.isPressed = true
+	elseif key == controls.left.key      then controls.left.isPressed      = true
+	elseif key == controls.right.key     then controls.right.isPressed     = true
+	elseif key == controls.escape.key    then controls.escape.isPressed    = true
+	elseif key == controls.action.key    then controls.action.isPressed    = true
+	elseif key == controls.context.key   then controls.context.isPressed   = true
 	end
+	print(key .. " is down.")
+end
+
+----------Call on Any Keyboard Release----------
+function love.keyreleased(key)
+	if     key == controls.forward.key   then controls.forward.isPressed   = false
+	elseif key == controls.backwards.key then controls.backwards.isPressed = false
+	elseif key == controls.left.key      then controls.left.isPressed      = false
+	elseif key == controls.right.key     then controls.right.isPressed     = false
+	elseif key == controls.escape.key    then controls.escape.isPressed    = false
+	elseif key == controls.action.key    then controls.action.isPressed    = false
+	elseif key == controls.context.key   then controls.context.isPressed   = false
+	end
+	
+	if     key == controls.forward.key   then controls.forward.isReleased   = true
+	elseif key == controls.backwards.key then controls.backwards.isReleased = true
+	elseif key == controls.left.key      then controls.left.isReleased      = true
+	elseif key == controls.right.key     then controls.right.isReleased     = true
+	elseif key == controls.escape.key    then controls.escape.isReleased    = true
+	elseif key == controls.action.key    then controls.action.isReleased    = true
+	elseif key == controls.context.key   then controls.context.isReleased   = true
+	end
+	print(key .. " is up.")
 end

@@ -15,15 +15,19 @@ function game.load()
 	math.randomseed(os.time())
 	love.graphics.setBackgroundColor(jLib.color.white)
 	
-	--------------Connect To Server--------------
+	--------------Load From File--------------
 	
-	local contents_or_nil, size_or_err = love.filesystem.read("player")
-	if not contents_or_nil then
+	local contents, size_or_err = love.filesystem.read("player")
+	if not contents then
 		game.player = Character(jLib.color.red)
 		game.updateSave()
-		contents_or_nil, size_or_err = love.filesystem.read("player")
+		contents, size_or_err = love.filesystem.read("player")
 	end
-	local data = jLib.destringify(contents_or_nil)
+	local data = jLib.destringify(contents)
+	
+	--------------Load Controls--------------
+	
+	if not data.controls then setDefaultControls() else controls = data.controls end
 	
 	--------------Create Player From Save--------------
 	
@@ -148,7 +152,18 @@ function game.draw()
 end
 
 function game.update(dt)
-
+	--------------Update Controls--------------
+	
+	if controls.escape.isReleased then
+		if game.state == "INGAME" then
+			if game.modal == "ESC_MENU" then game.modal = "NONE" else game.modal = "ESC_MENU" end
+		elseif (game.state == "SETTINGS") or (game.state == "FRIENDS_MENU")  then
+			game.state = "START_MENU"
+		end
+	end
+	
+	setDefaultControlState()
+	
 	--------------Update Timer for Broadcast Modal--------------
 	
 	if game.modal == "BROADCAST" then
@@ -275,13 +290,20 @@ function game.connect()
 	end
 end
 
-function game.updateSave()
+function game.updateSave()	
 	game.save = {
 		color = game.player.color,
 		name = game.player.name,
 		scale = game.player.scale,
 		x, y, rot = 0, 0, 0,
-		current_text = ""	
+		current_text = "",
+		controls = { forward   = { key = controls.forward.key,   isPressed = false },
+					 backwards = { key = controls.backwards.key, isPressed = false },
+					 left      = { key = controls.left.key,      isPressed = false },
+					 right     = { key = controls.right.key,     isPressed = false },
+					 escape    = { key = controls.escape.key,    isPressed = false },
+					 action    = { key = controls.action.key,    isPressed = false },
+		 			 context   = { key = controls.context.key,   isPressed = false }}
 	}
 	
 	local save = jLib.stringify(game.save)
