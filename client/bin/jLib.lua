@@ -1,5 +1,5 @@
 local path = ...
-local folder = string.match(path, ".*/")
+local folder = string.match(path, ".*/")  or ""
 local bitser = require (folder .. "bitser")
 test = {}
 --[[
@@ -11,7 +11,7 @@ test = {}
 	\ \________\ \_______\ \__\ \_______\
 	 \|________|\|_______|\|__|\|_______|
 
-	Made by Antimony Apodaca - v0.3
+	Made by Antimony Apodaca - v0.4
 Unlicense License - http://unlicense.org/
 
 I'm bad at versioning well, but the most updated
