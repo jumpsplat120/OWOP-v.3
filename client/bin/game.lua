@@ -231,16 +231,16 @@ function game.hover(dt, button, modal, reset)
 	
 	if reset then
 		if modal then
-			game[button][modal].hover.w = game[button][modal].regular.w * bounce
-			game[button][modal].hover.h = game[button][modal].regular.h * bounce
+			game[modal][button].hover.w = game[modal][button].regular.w * bounce
+			game[modal][button].hover.h = game[modal][button].regular.h * bounce
 		else
 			game[button].hover.w = game[button].regular.w * bounce
 			game[button].hover.h = game[button].regular.h * bounce
 		end
 	else
 		if modal then
-			game[button][modal].hover.w = game[button][modal].regular.w * bounce
-			game[button][modal].hover.h = game[button][modal].regular.h * bounce
+			game[modal][button].hover.w = game[modal][button].regular.w * bounce
+			game[modal][button].hover.h = game[modal][button].regular.h * bounce
 		else
 			game[button].hover.w = game[button].regular.w * bounce
 			game[button].hover.h = game[button].regular.h * bounce
