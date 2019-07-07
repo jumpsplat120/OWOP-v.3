@@ -26,6 +26,12 @@ end
 ----------Call on Mouse Click Down----------
 
 function love.mousepressed(x, y, button)
+	if #controls.isMouse > 1 then
+		for i = 1, #controls.isMouse, 1 do
+			if controls[controls.isMouse[i]].key == "lclick" then
+			end
+		end
+	end
 	if game.state == "START_MENU" then
 	elseif game.state == "SETTINGS" then
 		if jLib.isColliding(jLib.mouse, settings.colorPicker.ring, "circle")  and not (jLib.isColliding(jLib.mouse, settings.colorPicker.innerCircle, "circle")) then
@@ -40,24 +46,18 @@ end
 
 function love.mousereleased(x, y, button)
 	if game.state == "START_MENU" then
-		if jLib.isColliding(jLib.mouse, game.startButton.regular) then 
-			game.state = "INGAME"
-		elseif jLib.isColliding(jLib.mouse, game.settingsButton.regular) then
+		if     jLib.isColliding(jLib.mouse, game.startButton.regular)    then game.state = "INGAME"
+		elseif jLib.isColliding(jLib.mouse, game.friendsButton.regular)  then game.state = "FRIENDS_MENU" 
+		elseif jLib.isColliding(jLib.mouse, game.settingsButton.regular) then game.state = "SETTINGS"
 			settings.colorPicker.color = game.player.color
-			game.state = "SETTINGS"
-		elseif jLib.isColliding(jLib.mouse, game.friendsButton.regular) then 
-			game.state = "FRIENDS_MENU" 
 		end
 		game.resize.update()
 	elseif game.state == "INGAME" then
 		if game.modal == "ESC_MENU" then
-			if jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular) then
-				game.modal = "NONE"
-			elseif jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then
-				game.modal = "SETTINGS"
-			elseif jLib.isColliding(jLib.mouse, game.escapeModal.friendsButton.regular) then
-				game.modal = "FRIENDS_MENU"
-			elseif jLib.isColliding(jLib.mouse, game.escapeModal.escapeButton.regular) then
+			if     jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular)   then game.modal = "NONE"
+			elseif jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then game.modal = "SETTINGS"
+			elseif jLib.isColliding(jLib.mouse, game.escapeModal.friendsButton.regular)  then game.modal = "FRIENDS_MENU"
+			elseif jLib.isColliding(jLib.mouse, game.escapeModal.escapeButton.regular)   then
 				game.state = "START_MENU"
 				game.modal = "NONE"
 			end
@@ -84,7 +84,6 @@ function love.keypressed(key)
 	elseif key == controls.action.key    then controls.action.isPressed    = true
 	elseif key == controls.context.key   then controls.context.isPressed   = true
 	end
-	print(key .. " is down.")
 end
 
 ----------Call on Any Keyboard Release----------
@@ -106,5 +105,4 @@ function love.keyreleased(key)
 	elseif key == controls.action.key    then controls.action.isReleased    = true
 	elseif key == controls.context.key   then controls.context.isReleased   = true
 	end
-	print(key .. " is up.")
 end

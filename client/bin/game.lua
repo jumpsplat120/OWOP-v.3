@@ -27,11 +27,11 @@ function game.load()
 	
 	--------------Load Controls--------------
 	
-	if not data.controls then setDefaultControls() else controls = data.controls end
+	if data.controls then controls.updateSave(data.controls) else controls.setDefault() end
 	
 	--------------Create Player From Save--------------
 	
-	game.player = Character(data.color, data.name, data.scale, 0, 0)
+	game.player     = Character(data.color, data.name, data.scale, 0, 0)
 	game.loadPlayer = Character(data.color, "load", 1, jLib.window.width / 2, jLib.window.height / 2)
 	
 	--------------Start Menu Buttons--------------
@@ -156,13 +156,17 @@ function game.update(dt)
 	
 	if controls.escape.isReleased then
 		if game.state == "INGAME" then
-			if game.modal == "ESC_MENU" then game.modal = "NONE" else game.modal = "ESC_MENU" end
+			if game.modal == "ESC_MENU" then 
+				game.modal = "NONE"
+			else 
+				game.modal = "ESC_MENU"
+			end
 		elseif (game.state == "SETTINGS") or (game.state == "FRIENDS_MENU")  then
 			game.state = "START_MENU"
 		end
 	end
 	
-	setDefaultControlState()
+	controls.reset()
 	
 	--------------Update Timer for Broadcast Modal--------------
 	
@@ -174,18 +178,13 @@ function game.update(dt)
 	--------------Update Game State--------------
 	
 	if game.state == "START_MENU" then
-		game.hoverTimer = game.hoverTimer + dt
-		local bounce = jLib.map(-1,1,1,1.5,math.sin(game.hoverTimer))
-		if jLib.isColliding(jLib.mouse, game.startButton.regular) then
-			game.startButton.hover.w, game.startButton.hover.h = game.startButton.regular.w * bounce, game.startButton.regular.h * bounce
-		elseif jLib.isColliding(jLib.mouse, game.settingsButton.regular) then
-			game.settingsButton.hover.w, game.settingsButton.hover.h = game.settingsButton.regular.w * bounce, game.settingsButton.regular.h * bounce
-		elseif jLib.isColliding(jLib.mouse, game.friendsButton.regular) then
-			game.friendsButton.hover.w, game.friendsButton.hover.h = game.settingsButton.regular.w * bounce, game.settingsButton.regular.h * bounce
+		if     jLib.isColliding(jLib.mouse, game.startButton.regular)    then game.hover(dt, "startButton")
+		elseif jLib.isColliding(jLib.mouse, game.settingsButton.regular) then game.hover(dt, "settingsButton")
+		elseif jLib.isColliding(jLib.mouse, game.friendsButton.regular)  then game.hover(dt, "friendsButton")
 		else
-			game.startButton.hover.w, game.startButton.hover.h = game.startButton.regular.w, game.startButton.regular.h
-			game.settingsButton.hover.w, game.settingsButton.hover.h = game.settingsButton.regular.w, game.settingsButton.regular.h
-			game.friendsButton.hover.w, game.friendsButton.hover.h = game.friendsButton.regular.w, game.friendsButton.regular.h
+			game.hover(dt, "startButton", nil, true)
+			game.hover(dt, "friendsButton", nil, true)
+			game.hover(dt, "settingsButton", nil, true)
 			game.hoverTimer = 4.5
 		end
 	elseif game.state == "SETTINGS" then
@@ -206,21 +205,15 @@ function game.update(dt)
 		game.loadPlayer.canvas = love.graphics.newCanvas((game.loadPlayer.size * 2) * game.loadPlayer.scale + 5,(game.loadPlayer.size * 2) * game.loadPlayer.scale + 5)
 	elseif game.state == "INGAME" then
 		if game.modal == "ESC_MENU" then
-			game.hoverTimer = game.hoverTimer + dt
-			local bounce = jLib.map(-1,1,1,1.5,math.sin(game.hoverTimer))
-			if jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular) then
-				game.escapeModal.resumeButton.hover.w,  game.escapeModal.resumeButton.hover.h =  game.escapeModal.resumeButton.regular.w * bounce,  game.escapeModal.resumeButton.regular.h * bounce
-			elseif jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then
-				game.escapeModal.settingsButton.hover.w,  game.escapeModal.settingsButton.hover.h =  game.escapeModal.settingsButton.regular.w * bounce,  game.escapeModal.settingsButton.regular.h * bounce
-			elseif jLib.isColliding(jLib.mouse, game.escapeModal.friendsButton.regular) then
-				game.escapeModal.friendsButton.hover.w,  game.escapeModal.friendsButton.hover.h =  game.escapeModal.friendsButton.regular.w * bounce,  game.escapeModal.friendsButton.regular.h * bounce
-			elseif jLib.isColliding(jLib.mouse, game.escapeModal.escapeButton.regular) then
-				game.escapeModal.escapeButton.hover.w,  game.escapeModal.escapeButton.hover.h =  game.escapeModal.escapeButton.regular.w * bounce,  game.escapeModal.escapeButton.regular.h * bounce
+			if     jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular)   then game.hover(dt, "resumeButton", "escapeModal")
+			elseif jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then game.hover(dt, "settingsButton", "escapeModal")
+			elseif jLib.isColliding(jLib.mouse, game.escapeModal.friendsButton.regular)  then game.hover(dt, "friendsButton", "escapeModal")
+			elseif jLib.isColliding(jLib.mouse, game.escapeModal.escapeButton.regular)   then game.hover(dt, "escapeButton", "escapeModal")
 			else
-				game.escapeModal.resumeButton.hover.w, game.escapeModal.resumeButton.hover.h = game.escapeModal.resumeButton.regular.w, game.escapeModal.resumeButton.regular.h
-				game.escapeModal.settingsButton.hover.w, game.escapeModal.settingsButton.hover.h = game.escapeModal.settingsButton.regular.w, game.escapeModal.settingsButton.regular.h
-				game.escapeModal.friendsButton.hover.w, game.escapeModal.friendsButton.hover.h = game.escapeModal.friendsButton.regular.w, game.escapeModal.friendsButton.regular.h
-				game.escapeModal.escapeButton.hover.w, game.escapeModal.escapeButton.hover.h = game.escapeModal.escapeButton.regular.w, game.escapeModal.escapeButton.regular.h
+				game.hover(dt, "resumeButton", "escapeModal", true)
+				game.hover(dt, "settingsButton", "escapeModal", true)
+				game.hover(dt, "friendsButton", "escapeModal", true)
+				game.hover(dt, "escapeButton", "escapeModal", true)
 				game.hoverTimer = 4.5
 			end
 		end
@@ -230,6 +223,29 @@ function game.update(dt)
 	--------------Connect To Server (Runs once, runs in update so loading screen can display)--------------
 	
 	game.connect()
+end
+
+function game.hover(dt, button, modal, reset)
+	local bounce = jLib.map(-1,1,1,1.5,math.sin(game.hoverTimer))
+	game.hoverTimer = game.hoverTimer + dt
+	
+	if reset then
+		if modal then
+			game[button][modal].hover.w = game[button][modal].regular.w * bounce
+			game[button][modal].hover.h = game[button][modal].regular.h * bounce
+		else
+			game[button].hover.w = game[button].regular.w * bounce
+			game[button].hover.h = game[button].regular.h * bounce
+		end
+	else
+		if modal then
+			game[button][modal].hover.w = game[button][modal].regular.w * bounce
+			game[button][modal].hover.h = game[button][modal].regular.h * bounce
+		else
+			game[button].hover.w = game[button].regular.w * bounce
+			game[button].hover.h = game[button].regular.h * bounce
+		end
+	end
 end
 
 function game.resize.update()

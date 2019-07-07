@@ -5,7 +5,8 @@ controls = {
 	right     = {},
 	escape    = {},
 	action    = {},
-	context   = {}
+	context   = {},
+	isMouse   = {}
 }
 
 for k, v in pairs(controls) do
@@ -16,7 +17,7 @@ for k, v in pairs(controls) do
 	}
 end
 
-function setDefaultControls()
+function controls.setDefault()
 	print("Loading default control scheme...")
 	controls.forward.key   = "w"
 	controls.backwards.key = "s"
@@ -25,10 +26,33 @@ function setDefaultControls()
 	controls.escape.key    = "escape"
 	controls.action.key    = "lclick"
 	controls.context.key   = "rclick"
+	
+	controls.isMouse[1]    = "action"
+	controls.isMouse[2]    = "context"
 end
 
-function setDefaultControlState()
+function controls.updateSave(save)
+	controls.setDefault()
+	
+	controls.forward.key   = save.forward.key
+	controls.backwards.key = save.backwards.key
+	controls.left.key      = save.left.key
+	controls.right.key     = save.right.key
+	controls.escape.key    = save.escape.key
+	controls.action.key    = save.action.key
+	controls.context.key   = save.context.key
+	
 	for k, v in pairs(controls) do
-		controls[k].isReleased = false
+		if not (type(controls[k]) == "function") then
+			local key = controls[k].key
+		
+			if (key == "lclick") or (key == "rclick") or (key == "mclick") then controls.isMouse[#controls.isMouse + 1] = tostring(k) end
+		end
+	end
+end
+
+function controls.reset()
+	for k, v in pairs(controls) do
+		if not (type(controls[k]) == "function") then controls[k].isReleased = false end
 	end
 end
