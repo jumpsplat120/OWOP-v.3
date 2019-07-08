@@ -205,6 +205,18 @@ function game.update(dt)
 		game.loadPlayer.canvas = love.graphics.newCanvas((game.loadPlayer.size * 2) * game.loadPlayer.scale + 5,(game.loadPlayer.size * 2) * game.loadPlayer.scale + 5)
 	elseif game.state == "INGAME" then
 		game.player:update(dt)
+		
+		local data = "PLAYER_INFO:"
+		
+		game.player.name
+		game.player.x
+		game.player.y
+		game.player.color
+		game.player.
+		--Name/UUID, X/Y position, color, chat
+		
+		
+		network.send(data)
 		if game.modal == "ESC_MENU" then
 			if     jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular)   then game.hover(dt, "resumeButton", "escapeModal")
 			elseif jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then game.hover(dt, "settingsButton", "escapeModal")

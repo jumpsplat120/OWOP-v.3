@@ -2,7 +2,7 @@ local socket = require "socket"
 
 -- server for internal use
 local server = {
-	timeout = 0,
+	timeout = 3,
 	address = {ip = "108.230.159.104", port = 1051},	-- Public IP, port
 	time = love.timer.getTime(),
 	pong = love.timer.getTime()
@@ -12,7 +12,7 @@ local server = {
 network = {}
 
 server.udp = socket.udp()
-server.udp:settimeout(server.timeout)
+server.udp:settimeout(0)
 server.udp:setpeername(server.address.ip, server.address.port)
 server.peer_ip, server.peer_port = server.udp:getpeername()
 
@@ -40,15 +40,31 @@ function network.load()
 end
 
 function network.update(dt)
+	-- Check if server is up
 	server.ping()
+	
+	--Recieve data
 	local data = server.udp:receive()
+	
+	--If data is recieved, respond
 	if data then return network.response(data) end
-	local currTime = love.timer.getTime()
-	if server.pong + 3 < currTime then jLib.error("Seems we've lost connection to the server! Either there are problems on our end, or you just lost internet connection. We suggest trying again in a few minutes. Error code: NOPONG") end
+	
+	--If network is down (over 'server.timeout' seconds have passed since last pong), error out.
+	if network.isDown() then jLib.error("Seems we've lost connection to the server! Either there are problems on our end, or you just lost internet connection. We suggest trying again in a few minutes. Error code: NOPONG") end
+	
+	--Return false for print function in main
 	return false
 end
 
+function network.isDown()
+	local time = love.timer.getTime()
+	local pong = server.pong + server.timeout
+	
+	if pong < time then return false else return true end
+end
+
 function network.send(data)
+	if not data then return end
 	assert(type(data) == "string", "network.send() 'data' argument was not a string.")
 	local success, err = server.udp:send(data)
 	if err then error(err) end
@@ -60,12 +76,10 @@ function network.get()
 end
 
 function network.response(data)
-	if data == "Pong!" then
-		server.pong = love.timer.getTime()
-	elseif data == "SPAM_TEST" then
-		network.spamTest(50)
-	elseif string.find(data, "Broadcast:") then
-		game.broadcast.func(data)
+	if     data == "Pong!" then server.pong = love.timer.getTime()
+	elseif data == "SPAM_TEST" then network.spamTest(50)
+	elseif string.find(data, "Broadcast:") then game.broadcast.func(data)
+	elseif string.find(data, "Players:") then print("Drawing other players...")
 	end
 	return data
 end
