@@ -7,12 +7,12 @@ function Character:new(color, name, scale, x, y, rot, chat)
 	self.name = name or "Player" .. tostring(math.random(0,1000))
 	self.scale = scale or 1
 	self.size = 50
-	self.canvas = love.graphics.newCanvas((self.size * 2) * self.scale + 5,(self.size * 2) * self.scale + 5)
+	self.canvas = love.graphics.newCanvas(self.size * self.scale * 2, self.size * self.scale * 2)
 end
 
 function Character:draw()
 	local size = self.size * self.scale
-	
+
 	love.graphics.setCanvas(self.canvas)
 		love.graphics.setColor(self.color)
 		love.graphics.circle("fill", size, size, size)

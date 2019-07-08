@@ -204,6 +204,9 @@ function game.update(dt)
 		game.loadPlayer.x, game.loadPlayer.y = jLib.window.width / 2, jLib.window.height / 2
 		game.loadPlayer.canvas = love.graphics.newCanvas((game.loadPlayer.size * 2) * game.loadPlayer.scale + 5,(game.loadPlayer.size * 2) * game.loadPlayer.scale + 5)
 	elseif game.state == "INGAME" then
+		if controls.forward.isPressed then
+		elseif controls.backwards.isPressed then
+		end
 		if game.modal == "ESC_MENU" then
 			if     jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular)   then game.hover(dt, "resumeButton", "escapeModal")
 			elseif jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then game.hover(dt, "settingsButton", "escapeModal")
@@ -252,37 +255,87 @@ function game.resize.update()
 	local cw, ch = jLib.window.width / 2, jLib.window.height / 2
 	
 	if game.state == "START_MENU" then
-		local w, h = game.startButton.regular.w * game.scale, game.startButton.regular.h * game.scale
+		local start    = game.startButton
+		local settings = game.settingsButton
+		local friends  = game.friendsButton
 		
-		game.startButton.regular.x, game.startButton.regular.y = cw, ch - h - (h / 2)
-		game.settingsButton.regular.x, game.settingsButton.regular.y = cw, ch
-		game.friendsButton.regular.x, game.friendsButton.regular.y = cw, ch	+ h + (h / 2)
+		local w = start.regular.w * game.scale
+		local h = start.regular.h * game.scale
 		
-		game.startButton.hover.x, game.startButton.hover.y = cw, ch - h - (h / 2)
-		game.settingsButton.hover.x, game.settingsButton.hover.y = cw, ch
-		game.friendsButton.hover.x, game.friendsButton.hover.y = cw, ch	+ h + (h / 2)
+		start.regular.x = cw
+		start.hover.x   = cw
+		start.click.x   = cw
+				
+		settings.regular.x = cw
+		settings.hover.x   = cw
+		settings.click.x   = cw
 		
-		game.startButton.click.x, game.startButton.click.y = cw, ch - h - (h / 2)
-		game.settingsButton.click.x, game.settingsButton.click.y = cw, ch
-		game.friendsButton.click.x, game.friendsButton.click.y = cw, ch	+ h + (h / 2)
+		friends.regular.x = cw
+		friends.hover.x   = cw
+		friends.click.x   = cw
+		
+		local startCalc = ch - h - (h / 2)
+		start.regular.y = startCalc
+		start.hover.y   = startCalc
+		start.click.y   = startCalc
+		
+		settings.regular.y = ch
+		settings.hover.y   = ch
+		settings.click.y   = ch
+		
+		local friendsCalc = ch + h + (h / 2)
+		friends.regular.y = friendsCalc
+		friends.hover.y   = friendsCalc
+		friends.click.y   = friendsCalc
 	elseif game.state == "INGAME" then
 		if game.modal == "ESC_MENU" then
-			local w, h = game.escapeModal.resumeButton.regular.w * game.scale, game.escapeModal.resumeButton.regular.h * game.scale
+			local modal    = game.escapeModal
+			
+			local resume   = modal.resumeButton
+			local settings = modal.settingsButton
+			local friends  = modal.friendsButton
+			local escape   = modal.escapeButton
+			
+			local w = resume.regular.w * game.scale
+			local h = resume.regular.h * game.scale
+			
 			local margin = 20 * game.scale
 			
-			game.escapeModal.resumeButton.regular.x, game.escapeModal.resumeButton.regular.y = cw, ch - (h * 1.5) - (margin * 1.5)
-			game.escapeModal.settingsButton.regular.x, game.escapeModal.settingsButton.regular.y = cw, ch - (h * .5) - (margin * .5)
-			game.escapeModal.friendsButton.regular.x, game.escapeModal.friendsButton.regular.y = cw, ch + (h * .5) + (margin * .5)
-			game.escapeModal.escapeButton.regular.x, game.escapeModal.escapeButton.regular.y = cw, ch + (h * 1.5) + (margin * 1.5)
-			game.escapeModal.resumeButton.hover.x, game.escapeModal.resumeButton.hover.y = cw, ch - (h * 1.5) - (margin * 1.5)
-			game.escapeModal.settingsButton.hover.x, game.escapeModal.settingsButton.hover.y = cw, ch - (h * .5) - (margin * .5)
-			game.escapeModal.friendsButton.hover.x, game.escapeModal.friendsButton.hover.y = cw, ch + (h * .5) + (margin * .5)
-			game.escapeModal.escapeButton.hover.x, game.escapeModal.escapeButton.hover.y = cw, ch + (h * 1.5) + (margin * 1.5)
+			resume.regular.x = cw
+			resume.hover.x   = cw
+			resume.click.x   = cw
 			
-			game.escapeModal.resumeButton.click.x, game.escapeModal.resumeButton.click.y = cw, ch - (h * 1.5) - (margin * 1.5)
-			game.escapeModal.settingsButton.click.x, game.escapeModal.settingsButton.click.y = cw, ch - (h * .5) - (margin * .5)
-			game.escapeModal.friendsButton.click.x, game.escapeModal.friendsButton.click.y = cw, ch + (h * .5) + (margin * .5)
-			game.escapeModal.escapeButton.click.x, game.escapeModal.escapeButton.click.y = cw, ch + (h * 1.5) + (margin * 1.5)
+			settings.regular.x = cw
+			settings.hover.x   = cw
+			settings.click.x   = cw
+			
+			friends.regular.x = cw
+			friends.hover.x   = cw
+			friends.click.x   = cw
+			
+			escape.regular.x = cw
+			escape.hover.x   = cw
+			escape.click.x   = cw
+			
+			local resumeCalc = ch - (h * 1.5) - (margin * 1.5)
+			resume.regular.y = resumeCalc
+			resume.hover.y   = resumeCalc
+			resume.click.y   = resumeCalc
+			
+			local settingsCalc = ch - (h * .5) - (margin * .5)
+			settings.regular.y = settingsCalc
+			settings.hover.y   = settingsCalc
+			settings.click.y   = settingsCalc
+			
+			local friendsCalc = ch + (h * .5) + (margin * .5)
+			friends.regular.y = friendsCalc
+			friends.hover.y   = friendsCalc
+			friends.click.y   = friendsCalc
+			
+			local escapeCalc = ch + (h * 1.5) + (margin * 1.5)
+			escape.regular.y = escapeCalc
+			escape.hover.y   = escapeCalc
+			escape.click.y   = escapeCalc
 		end
 	elseif game.state == "SETTINGS" then
 		settings.colorPicker.update(1 * game.scale)

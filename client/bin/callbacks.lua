@@ -15,12 +15,14 @@ end
 ----------Call on Mousewheel Movement----------
 
 function love.wheelmoved(x, y)
-	if y < 0 and game.player.scale > .6 then
+	if not (game.modal == "NONE") then return end
+	
+	if y < 0 and game.player.scale > .3 then
 		game.player.scale = game.player.scale - .1
-	elseif y > 0 and game.player.scale < 5 then
+	elseif y > 0 and game.player.scale < 2 then
 		game.player.scale = game.player.scale + .1
 	end
-	game.player.canvas = love.graphics.newCanvas((game.player.size * 2) * game.player.scale + 5,(game.player.size * 2) * game.player.scale + 5)
+	print("Player scale is " .. game.player.scale)
 end
 
 ----------Call on Mouse Click Down----------
