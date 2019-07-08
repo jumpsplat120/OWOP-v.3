@@ -22,7 +22,7 @@ function love.wheelmoved(x, y)
 	elseif y > 0 and game.player.scale < 2 then
 		game.player.scale = game.player.scale + .1
 	end
-	print("Player scale is " .. game.player.scale)
+	game.player.canvas = love.graphics.newCanvas(game.player.size * game.player.scale * 2, game.player.size * game.player.scale * 2)
 end
 
 ----------Call on Mouse Click Down----------

@@ -141,10 +141,10 @@ function game.draw()
 		love.graphics.printf("Loading...", game.font, (jLib.window.width / 2) - ((game.font:getWidth("Loading...") * size) / 2), 5, jLib.window.width / size, "left", 0, size)
 		game.loadPlayer:draw()
 	elseif game.state == "INGAME" then
-		camera:set()
+		--camera:set()
 			game.player:draw()
-			camera:setPosition(game.player.x - (jLib.window.width / 2), game.player.y - (jLib.window.height / 2))
-		camera:unset()
+			--camera:setPosition(game.player.x - (jLib.window.width / 2), game.player.y - (jLib.window.height / 2))
+		--camera:unset()
 	elseif game.state == "FRIENDS_MENU" then
 		love.graphics.setColor(jLib.color.black)
 		love.graphics.print("friends menu")
@@ -204,9 +204,7 @@ function game.update(dt)
 		game.loadPlayer.x, game.loadPlayer.y = jLib.window.width / 2, jLib.window.height / 2
 		game.loadPlayer.canvas = love.graphics.newCanvas((game.loadPlayer.size * 2) * game.loadPlayer.scale + 5,(game.loadPlayer.size * 2) * game.loadPlayer.scale + 5)
 	elseif game.state == "INGAME" then
-		if controls.forward.isPressed then
-		elseif controls.backwards.isPressed then
-		end
+		game.player:update(dt)
 		if game.modal == "ESC_MENU" then
 			if     jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular)   then game.hover(dt, "resumeButton", "escapeModal")
 			elseif jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then game.hover(dt, "settingsButton", "escapeModal")

@@ -21,8 +21,16 @@ function Character:draw()
 		love.graphics.setScissor()
 	love.graphics.setCanvas()
 	
+	print("Drawing character canvas at x: " .. self.x .. " and y: " .. self.y .. " with a rotation of " .. self.rot .. " and size of " .. size)
 	love.graphics.draw(self.canvas, self.x, self.y, self.rot, 1, 1, size, size)
 end
 
 function Character:update(dt)
+	if     controls.forward.isPressed   then 
+	elseif controls.backwards.isPressed then
+	end
+	
+	if     controls.left.isPressed  then self.rot = (self.rot - .1) * dt
+	elseif controls.right.isPressed then self.rot = (self.rot + .1) * dt
+	end
 end
