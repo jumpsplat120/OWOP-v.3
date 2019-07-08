@@ -206,17 +206,15 @@ function game.update(dt)
 	elseif game.state == "INGAME" then
 		game.player:update(dt)
 		
-		local data = "PLAYER_INFO:"
+		local data = {  id    = "PLAYER_INFO:",
+						name  = game.player.name,
+						x     = game.player.x,
+						y     = game.player.y,
+						color = jLib.stringify(game.player.color),
+						chat  = game.player.chat }
+							
+		network.send(jLib.stringify(dataTable))
 		
-		game.player.name
-		game.player.x
-		game.player.y
-		game.player.color
-		game.player.
-		--Name/UUID, X/Y position, color, chat
-		
-		
-		network.send(data)
 		if game.modal == "ESC_MENU" then
 			if     jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular)   then game.hover(dt, "resumeButton", "escapeModal")
 			elseif jLib.isColliding(jLib.mouse, game.escapeModal.settingsButton.regular) then game.hover(dt, "settingsButton", "escapeModal")

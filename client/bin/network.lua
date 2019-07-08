@@ -57,10 +57,10 @@ function network.update(dt)
 end
 
 function network.isDown()
-	local time = love.timer.getTime()
-	local pong = server.pong + server.timeout
+	local time = love.timer.getTime() + server.timeout
+	local pong = server.pong
 	
-	if pong < time then return false else return true end
+	if pong > time then return true else return false end
 end
 
 function network.send(data)
@@ -87,7 +87,7 @@ end
 function network.spamTest(amt)
 	local index = 0
 	while index < amt do
-		network.send("Spam... " .. tostring(index))
+		network.send(jLib.stringify({id = "SPAM", data = tostring(index)}))
 		index = index + 1
 	end
 end

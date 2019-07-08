@@ -33,24 +33,20 @@ end
 function network.response(data, address, port)
 	local response
 
-	if data == "Ping!" then
+	if data == "Ping!" then 
+		response = "Pong!"
 		for k, v in pairs(server.clients) do
 			if server.clients[k].ip == address then server.clients[k].timer = love.timer.getTime() end
 		end
-		local msg, err = network.sendto("Pong!", address, port)
-		response = "Pong!"
 	elseif data == "Requesting connection..." then
-		local msg, err = network.sendto("Connected!", address, port)
-		if err then error(err) end
-		local newClient = {
-			ip = address,
-			port = port,
-			timer = love.timer.getTime()
-		}
-		server.clients[#server.clients + 1] = newClient
-		response = "Connected!"
+		response = "Connected!"					
+		server.clients[#server.clients + 1] = { ip    = address,
+												port  = port,
+												timer = love.timer.getTime() }
 	end
 	
+	if response then network.sendto(response, address, port) end
+		
 	return response
 end
 
