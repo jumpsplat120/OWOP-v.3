@@ -141,10 +141,10 @@ function game.draw()
 		love.graphics.printf("Loading...", game.font, (jLib.window.width / 2) - ((game.font:getWidth("Loading...") * size) / 2), 5, jLib.window.width / size, "left", 0, size)
 		game.loadPlayer:draw()
 	elseif game.state == "INGAME" then
-		--camera:set()
+		camera:set()
 			game.player:draw()
-			--camera:setPosition(game.player.x - (jLib.window.width / 2), game.player.y - (jLib.window.height / 2))
-		--camera:unset()
+			camera:setPosition(game.player.x - (jLib.window.width / 2), game.player.y - (jLib.window.height / 2))
+		camera:unset()
 	elseif game.state == "FRIENDS_MENU" then
 		love.graphics.setColor(jLib.color.black)
 		love.graphics.print("friends menu")

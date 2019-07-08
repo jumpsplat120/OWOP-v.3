@@ -2,21 +2,21 @@ settings = {}
 
 --------------Define the Color Picker Array--------------
 
-settings.colorPicker = {}
-settings.colorPicker.triangle = {}
-settings.colorPicker.ring = {}
+settings.colorPicker             = {}
+settings.colorPicker.triangle    = {}
+settings.colorPicker.ring        = {}
 settings.colorPicker.innerCircle = {}
-settings.colorPicker.tinyCircle = {}
+settings.colorPicker.tinyCircle  = {}
 
 --------------Assigning Misc. Values--------------
 
-settings.colorPicker.ring.isClicked = false
+settings.colorPicker.ring.isClicked     = false
 settings.colorPicker.triangle.isClicked = false
 
-settings.colorPicker.triangleTex = love.graphics.newImage("assets/triangle_gradient.png")
+settings.colorPicker.triangleTex  = love.graphics.newImage("assets/triangle_gradient.png")
 settings.colorPicker.triangleTint = love.graphics.newImage("assets/triangle_tint.png")
-settings.colorPicker.ringTex = love.graphics.newImage("assets/rainbow_gradient.png")
-settings.colorPicker.line = love.graphics.newImage("assets/line.png")
+settings.colorPicker.ringTex      = love.graphics.newImage("assets/rainbow_gradient.png")
+settings.colorPicker.line         = love.graphics.newImage("assets/line.png")
 
 settings.colorPicker.x, settings.colorPicker.y = 0, 0
 
@@ -24,10 +24,10 @@ settings.colorPicker.tint = jLib.color.red
 
 --------------Define Shapes through Constructor Classes (gui.lua)--------------
 
-settings.colorPicker.ring = CircleButton(settings.colorPicker.x, settings.colorPicker.y, 100, "fill", "", jLib.color.clear)
+settings.colorPicker.ring        = CircleButton(settings.colorPicker.x, settings.colorPicker.y, 100, "fill", "", jLib.color.clear)
 settings.colorPicker.innerCircle = CircleButton(settings.colorPicker.x, settings.colorPicker.y, 80, "fill", "", jLib.color.clear)
-settings.colorPicker.triangle = TriangleButton(settings.colorPicker.x, settings.colorPicker.y, 140, 0, "fill", "", jLib.color.clear)
-settings.colorPicker.tinyCircle = RingButton(settings.colorPicker.x, settings.colorPicker.y, 5, "fill", "", jLib.color.grey)
+settings.colorPicker.triangle    = TriangleButton(settings.colorPicker.x, settings.colorPicker.y, 140, 0, "fill", "", jLib.color.clear)
+settings.colorPicker.tinyCircle  = RingButton(settings.colorPicker.x, settings.colorPicker.y, 5, "fill", "", jLib.color.grey)
 
 --------------Draw Function--------------
 
@@ -58,10 +58,10 @@ settings.colorPicker.update = function(scale) --Multiplier; scale of 1 is regula
 	--DESTROY REFERENCE OF HITBOXES
 	settings.colorPicker.ring, settings.colorPicker.innerCircle, settings.colorPicker.triangle, settings.colorPicker.tinyCircle = nil, nil, nil, nil
 	--CREATE NEW HITBOXES
-	settings.colorPicker.ring = CircleButton(settings.colorPicker.x, settings.colorPicker.y, size * .5, "fill", "", jLib.color.clear)
+	settings.colorPicker.ring        = CircleButton(settings.colorPicker.x, settings.colorPicker.y, size * .5, "fill", "", jLib.color.clear)
 	settings.colorPicker.innerCircle = CircleButton(settings.colorPicker.x, settings.colorPicker.y, size * .4, "fill", "", jLib.color.clear)
-	settings.colorPicker.triangle = TriangleButton(settings.colorPicker.x, settings.colorPicker.y, size * .7, rot, "fill", "", jLib.color.clear)
-	settings.colorPicker.tinyCircle = RingButton(settings.colorPicker.x, settings.colorPicker.y, size * 0.025, "fill", "", jLib.color.grey)
+	settings.colorPicker.triangle    = TriangleButton(settings.colorPicker.x, settings.colorPicker.y, size * .7, rot, "fill", "", jLib.color.clear)
+	settings.colorPicker.tinyCircle  = RingButton(settings.colorPicker.x, settings.colorPicker.y, size * 0.025, "fill", "", jLib.color.grey)
 end
 
 --------------Color Determination Function--------------

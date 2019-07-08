@@ -8,6 +8,16 @@ function Character:new(color, name, scale, x, y, rot, chat)
 	self.scale = scale or 1
 	self.size = 50
 	self.canvas = love.graphics.newCanvas(self.size * self.scale * 2, self.size * self.scale * 2)
+	
+	self.velocity = {}
+	self.velocity.current = 0
+	self.velocity.drag    = 3
+	
+	--Accessibly stored variables, might want to be changed on interaction with things
+	self.speed = {}
+	self.speed.rotation = 5
+	self.speed.forward  = 10
+	self.speed.max      = 25
 end
 
 function Character:draw()
@@ -21,16 +31,27 @@ function Character:draw()
 		love.graphics.setScissor()
 	love.graphics.setCanvas()
 	
-	print("Drawing character canvas at x: " .. self.x .. " and y: " .. self.y .. " with a rotation of " .. self.rot .. " and size of " .. size)
+	--print("Drawing character canvas at x: " .. self.x .. " and y: " .. self.y .. " with a rotation of " .. self.rot .. " and size of " .. size)
 	love.graphics.draw(self.canvas, self.x, self.y, self.rot, 1, 1, size, size)
 end
 
 function Character:update(dt)
-	if     controls.forward.isPressed   then 
-	elseif controls.backwards.isPressed then
+	local sin, cos = jLib.getSinCos(self.rot + (math.pi * -.75))
+	
+	if     controls.forward.isPressed   then self.velocity.current = math.min(self.velocity.current + self.speed.forward * dt, self.speed.max)
+	elseif controls.backwards.isPressed then self.velocity.current = math.max(self.velocity.current - self.speed.forward * dt, -self.speed.max)
 	end
 	
-	if     controls.left.isPressed  then self.rot = (self.rot - .1) * dt
-	elseif controls.right.isPressed then self.rot = (self.rot + .1) * dt
+	self.x = self.x + cos * self.velocity.current
+	self.y = self.y + sin * self.velocity.current
+	
+	if     controls.left.isPressed  then self.rot = self.rot + self.speed.rotation * dt
+	elseif controls.right.isPressed then self.rot = self.rot - self.speed.rotation * dt
+	end
+	
+	
+	
+	if     self.velocity.current > 0 then self.velocity.current = math.max(self.velocity.current - self.velocity.drag * dt, 0)
+	elseif self.velocity.current < 0 then self.velocity.current = math.min(self.velocity.current + self.velocity.drag * dt, 0)
 	end
 end

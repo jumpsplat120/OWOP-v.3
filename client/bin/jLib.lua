@@ -1,7 +1,7 @@
 local path = ...
 local folder = string.match(path, ".*/")  or ""
 local bitser = require (folder .. "bitser")
-test = {}
+
 --[[
 		___  ___       ___  ________     
 	   |\  \|\  \     |\  \|\   __  \    
@@ -11,7 +11,7 @@ test = {}
 	\ \________\ \_______\ \__\ \_______\
 	 \|________|\|_______|\|__|\|_______|
 
-	Made by Antimony Apodaca - v0.4
+	Made by Antimony Apodaca - v0.5
 Unlicense License - http://unlicense.org/
 
 I'm bad at versioning well, but the most updated
@@ -228,6 +228,11 @@ end
 --Returns direction in radians. Assumes pointing straight up
 function jLib.getDir(fromX, fromY, toX, toY)
 	return math.atan2(toY - fromY, toX - fromX) + (math.pi * .5)
+end
+
+--Helper function, returns the sin and cos from a supplied rotation in radians
+function jLib.getSinCos(rotation)
+	return math.sin(rotation), math.cos(rotation)
 end
 
 -- Returns the HSV equivalent of the given RGB-defined color. Taken from here: https://gist.github.com/GigsD4X/8513963 and modified by me. RGB = 0 - 255
