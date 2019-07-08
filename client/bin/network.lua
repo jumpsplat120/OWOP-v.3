@@ -14,7 +14,7 @@ network = {}
 server.udp = socket.udp()
 server.udp:settimeout(0)
 server.udp:setpeername(server.address.ip, server.address.port)
-server.peer_ip, server.peer_port = server.udp:getpeername()
+network.ip, network.port = server.udp:getpeername()
 
 function network.ping()
 	local currTime = love.timer.getTime()

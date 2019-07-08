@@ -1,5 +1,26 @@
 Character = Object:extend()
 
+local function getUUID()
+	local alphanumeric = jLib.getAlphaNumeric()
+	local uuidTable = {}
+	local uuid = ""
+	
+	--UUID TEMPLATE: xxxxxx-xxxx-xxxxxx
+	for i = 1, 16, 1 do uuidTable[i] = alphanumeric(math.random(1, #alphanumeric)) end
+	
+	for i = 1, 6, 1 do uuid = uuid .. uuidTable[i] end
+	
+	uuid = uuid .. "-"
+	
+	for i = 6, 10, 1 do uuid = uuid .. uuidTable[i] end
+	
+	uuid = uuid .. "-"
+	
+	for i = 10, 16, 1 do uuid = uuid .. uuidTable[i] end
+	
+	return uuid
+end
+
 function Character:new(color, name, scale, x, y, rot, chat)
 	self.x     = x     or 0
 	self.y     = y     or 0
@@ -8,6 +29,9 @@ function Character:new(color, name, scale, x, y, rot, chat)
 	self.name  = name  or "Player" .. tostring(math.random(0,1000))
 	self.scale = scale or 1
 	self.chat  = chat  or ""
+	
+	--THIS SHOULD NEVER BE CHANGED
+	self.UUID   = getUUID()
 	
 	self.size   = 50
 	self.canvas = love.graphics.newCanvas(self.size * self.scale * 2, self.size * self.scale * 2)
@@ -38,7 +62,7 @@ function Character:draw()
 end
 
 function Character:update(dt)
-	local sin, cos = jLib.getSinCos(self.rot + (math.pi * -.75))
+	local sin, cos = math.sin(self.rot + (math.pi * -.75)), math.cos(self.rot + (math.pi * -.75))
 	
 	--Add forward/backwards velocity
 	if     controls.forward.isPressed   then self.velocity.current = math.min(self.velocity.current + self.speed.forward * dt, self.speed.max)

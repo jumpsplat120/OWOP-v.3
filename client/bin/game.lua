@@ -9,7 +9,7 @@ game = {
 	broadcastModal = love.graphics.newImage("assets/modal.png")
 }
 
-local other_players = {}
+local otherPlayers = {}
 
 function game.load()
 	math.randomseed(os.time())
@@ -246,7 +246,24 @@ function game.update(dt)
 end
 
 function game.updatePlayers(clients)
-	print(#clients)
+	if #clients <= 1 then return end
+	
+	for i = 1, #clients, 1 do
+		if (clients[i].ip == network.ip) and (clients[i].port == network.port) then
+			--Skip yourself!
+		else
+			--IF AMOUNT OF CONNECTED CLIENTS ISN'T THE SAME AS THE AMOUNT OF LOCALLY SAVED PLAYERS
+			while not (#clients == #otherPlayers) do
+				if     #otherPlayers > #clients do
+					for x = 1, #otherPlayers, 1 do
+						if otherPlayers[x].ip == clients[i].ip and otherPlayers[x].port
+						end
+					end
+				elseif #otherPlayers < #clients do
+				end
+			end
+		end
+	end
 end
 
 function game.hover(dt, button, modal, reset)

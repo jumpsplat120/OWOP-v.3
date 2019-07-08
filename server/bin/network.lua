@@ -81,8 +81,6 @@ end
 function network.updateClient(address, port, data)
 	server.pongTimer(address, port)
 	
-	con.print("Updating client...", address, port)
-	
 	for i = 1, #server.clients, 1 do
 		if (server.clients[i].ip == address) and (server.clients[i].port == port) then
 			server.clients[i].info.name  = data.name
@@ -94,8 +92,6 @@ function network.updateClient(address, port, data)
 			return jLib.stringify({id = "PLAYERS", clients = server.clients})
 		end
 	end
-	
-	con.print("Sending other players!")
 end
 
 function network.sendto(data, address, port)

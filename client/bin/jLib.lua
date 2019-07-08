@@ -230,11 +230,6 @@ function jLib.getDir(fromX, fromY, toX, toY)
 	return math.atan2(toY - fromY, toX - fromX) + (math.pi * .5)
 end
 
---Helper function, returns the sin and cos from a supplied rotation in radians
-function jLib.getSinCos(rotation)
-	return math.sin(rotation), math.cos(rotation)
-end
-
 -- Returns the HSV equivalent of the given RGB-defined color. Taken from here: https://gist.github.com/GigsD4X/8513963 and modified by me. RGB = 0 - 255
 function jLib.RGBtoHSV(r, g, b)
 	--HUE, SATURATION, VALUE, VALUE_DELTA, MIN_VALUE, MAX_VALUE
@@ -288,4 +283,9 @@ function jLib.HSVtoRGB(h, s, v)
 	elseif hsec == 4 then return t, p, v
 	elseif hsec == 5 then return v, p, q
 	end
+end
+
+-- Helper function that literally just returns a table that contains 0-9, a-z and A-Z.There's probably an easier way to do this
+function jLib.getAlphaNumeric()
+	return alphanumeric = {"1","2","3","4","5","6","7","8","9","0","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"}
 end
