@@ -3,6 +3,7 @@ require "bin/console"
 require "bin/read"
 require "bin/network"
 require "bin/game"
+require "bin/jLib"
 
 function love.load()
 end
@@ -13,10 +14,6 @@ end
 
 function love.update(dt)
 	local ip, port, data = network.update(dt)
-	if data then
-		con.print(data, ip, port)
-		local response = network.response(data, ip, port)
-		con.print("Responded with '" .. tostring(response) .. "'")
-	end
+	if data then network.response(data, ip, port) end
 	con.update(dt)
 end

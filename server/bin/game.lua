@@ -1,7 +1,6 @@
 game = {}
 
 --Wrapper function for network.sendtoall()--
-function game.broadcast(data)
-	local data = "Broadcast:" .. data
-	network.sendtoall(data)
+function game.broadcast(message)
+	network.sendtoall(jLib.stringify({id = "BROADCAST", data = message}))
 end

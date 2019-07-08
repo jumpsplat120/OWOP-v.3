@@ -16,7 +16,7 @@ server.udp:setsockname(server.address.ip, server.address.port)
 server.ip, server.port = server.udp:getsockname()
 con.print("Server started...", server.ip, server.port)
 
-function server.updateConnected()
+function server.checkConnectedClients()
 	for k, v in pairs(server.clients) do
 		local currTime = love.timer.getTime()
 		if server.clients[k].timer + 2 < currTime then table.remove(server.clients, k) end
@@ -24,30 +24,78 @@ function server.updateConnected()
 end
 
 function network.update(dt)
-	server.updateConnected()
-	local data, err_or_ip, port_or_nil = server.udp:receivefrom()
-	if data then return err_or_ip, port_or_nil, data end
-	return false
+	server.checkConnectedClients()
+	local data, ip, port = server.udp:receivefrom()
+	if data then return ip, port, data else return false end
 end
 
 function network.response(data, address, port)
 	local response
-
-	if data == "Ping!" then 
-		response = "Pong!"
-		for k, v in pairs(server.clients) do
-			if server.clients[k].ip == address then server.clients[k].timer = love.timer.getTime() end
-		end
-	elseif data == "Requesting connection..." then
-		response = "Connected!"					
-		server.clients[#server.clients + 1] = { ip    = address,
-												port  = port,
-												timer = love.timer.getTime() }
+	
+	data = jLib.destringify(data) or {id = false}
+	
+	if     data.id == "PING"        then response = network.pong(address, port)
+	elseif data.id == "REQ_CONNECT" then response = network.newClient(address, port)
+	elseif data.id == "PLAYER_INFO" then response = network.updateClient(address, port, data)
+	elseif data.id then con.print("[ERROR] Missing response for ID: " .. data.id)
 	end
 	
 	if response then network.sendto(response, address, port) end
 		
 	return response
+end
+
+function server.pongTimer(address, port)
+	for k, v in pairs(server.clients) do
+		if server.clients[k].ip == address then server.clients[k].timer = love.timer.getTime() end
+	end
+end
+
+function network.pong(address, port)
+	con.print("Ping recieved from", address, port)
+	
+	server.pongTimer(address, port)
+	
+	con.print("Pong sent back!")
+	
+	return jLib.stringify({id = "PONG", data = "Pong!"})
+end
+
+function network.newClient(address, port)
+	con.print("Connection request recieved from", address, port)
+	
+	server.clients[#server.clients + 1] = { ip    = address,
+											port  = port,
+											timer = love.timer.getTime(),
+											info  = {   name  = "DEFAULT",
+														x     = 0,
+														y     = 0,
+														color = jLib.color.black,
+														chat  = "" }}
+														
+	con.print("Client connected!")													
+														
+	return jLib.stringify({id = "CONNECT_STATUS", data = "Connected!"})
+end
+
+function network.updateClient(address, port, data)
+	server.pongTimer(address, port)
+	
+	con.print("Updating client...", address, port)
+	
+	for i = 1, #server.clients, 1 do
+		if (server.clients[i].ip == address) and (server.clients[i].port == port) then
+			server.clients[i].info.name  = data.name
+			server.clients[i].info.x     = data.x
+			server.clients[i].info.y     = data.y
+			server.clients[i].info.color = data.color
+			server.clients[i].info.chat  = data.chat
+			
+			return jLib.stringify({id = "PLAYERS", clients = server.clients})
+		end
+	end
+	
+	con.print("Sending other players!")
 end
 
 function network.sendto(data, address, port)

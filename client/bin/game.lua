@@ -17,8 +17,10 @@ function game.load()
 	
 	--------------Load From File--------------
 	
+	print("Loading save from file...")
 	local contents, size_or_err = love.filesystem.read("player")
 	if not contents then
+		print("Save not found! Creating default save...")
 		game.player = Character(jLib.color.red)
 		game.updateSave()
 		contents, size_or_err = love.filesystem.read("player")
@@ -31,15 +33,18 @@ function game.load()
 	
 	--------------Create Player From Save--------------
 	
+	print("Character created!" .. " color: " .. "R: " .. data.color[1] ..  " G: " .. data.color[2] .. " B: " .. data.color[3] .. ", name: " .. data.name .. ", scale: " .. data.scale)
 	game.player     = Character(data.color, data.name, data.scale, 0, 0)
 	game.loadPlayer = Character(data.color, "load", 1, jLib.window.width / 2, jLib.window.height / 2)
 	
 	--------------Start Menu Buttons--------------
 	
+	print("Creating start menu buttons...")
 	start_menu.load()
 	
 	--------------In Game Escape Menu--------------
 	
+	print("Creating escape menu buttons...")
 	escape_modal.load()
 	
 	--------------Final Init--------------
@@ -178,6 +183,8 @@ function game.update(dt)
 	--------------Update Game State--------------
 	
 	if game.state == "START_MENU" then
+		network.ping()
+		
 		if     jLib.isColliding(jLib.mouse, game.startButton.regular)    then game.hover(dt, "startButton")
 		elseif jLib.isColliding(jLib.mouse, game.settingsButton.regular) then game.hover(dt, "settingsButton")
 		elseif jLib.isColliding(jLib.mouse, game.friendsButton.regular)  then game.hover(dt, "friendsButton")
@@ -188,6 +195,8 @@ function game.update(dt)
 			game.hoverTimer = 4.5
 		end
 	elseif game.state == "SETTINGS" then
+		network.ping()
+		
 		settings.colorPicker.triangle:update(dt)
 		
 		local color = {}
@@ -206,14 +215,14 @@ function game.update(dt)
 	elseif game.state == "INGAME" then
 		game.player:update(dt)
 		
-		local data = {  id    = "PLAYER_INFO:",
+		local data = {  id    = "PLAYER_INFO",
 						name  = game.player.name,
 						x     = game.player.x,
 						y     = game.player.y,
 						color = jLib.stringify(game.player.color),
 						chat  = game.player.chat }
 							
-		network.send(jLib.stringify(dataTable))
+		network.send(jLib.stringify(data))
 		
 		if game.modal == "ESC_MENU" then
 			if     jLib.isColliding(jLib.mouse, game.escapeModal.resumeButton.regular)   then game.hover(dt, "resumeButton", "escapeModal")
@@ -234,6 +243,10 @@ function game.update(dt)
 	--------------Connect To Server (Runs once, runs in update so loading screen can display)--------------
 	
 	game.connect()
+end
+
+function game.updatePlayers(clients)
+	print(#clients)
 end
 
 function game.hover(dt, button, modal, reset)
@@ -260,6 +273,7 @@ function game.hover(dt, button, modal, reset)
 end
 
 function game.resize.update()
+	print("Updating scale of all objects based on window size...")
 	local cw, ch = jLib.window.width / 2, jLib.window.height / 2
 	
 	if game.state == "START_MENU" then

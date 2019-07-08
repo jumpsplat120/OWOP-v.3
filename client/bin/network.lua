@@ -16,33 +16,25 @@ server.udp:settimeout(0)
 server.udp:setpeername(server.address.ip, server.address.port)
 server.peer_ip, server.peer_port = server.udp:getpeername()
 
-function server.ping()
+function network.ping()
 	local currTime = love.timer.getTime()
 	if server.time + 1 < currTime then
-		local success, err = server.udp:send("Ping!")
+		local success, err = server.udp:send(jLib.stringify({id = "PING", data = "Ping!"}))
 		if err then error(err) end
 		server.time = love.timer.getTime()
 	end
 end
 
 function network.load()
-	print("Connecting...")
-	local success_or_nil, err = server.udp:send("Requesting connection...")
+	print("Connecting to " .. server.address.ip .. ":" .. server.address.port)
+	local _, err = server.udp:send(jLib.stringify({id = "REQ_CONNECT", data = "Requesting connection..."}))
 	if err then error(err) end
 	local data = server.udp:receive()
 	game.timer = love.timer.getTime()
-	if not data then 
-		game.isConnected = false
-		return
-	end
-	game.isConnected = true
-	print("Connected to ", server.peer_ip, server.peer_port)
+	if data then print("Connected!") else print("Server wasn't found on first ping, will try again...") end
 end
 
 function network.update(dt)
-	-- Check if server is up
-	server.ping()
-	
 	--Recieve data
 	local data = server.udp:receive()
 	
@@ -68,7 +60,7 @@ function network.send(data)
 	assert(type(data) == "string", "network.send() 'data' argument was not a string.")
 	local success, err = server.udp:send(data)
 	if err then error(err) end
-	return "Data Sent... " .. data
+	return "Data sent!"
 end
 
 function network.get()
@@ -76,18 +68,20 @@ function network.get()
 end
 
 function network.response(data)
-	if     data == "Pong!" then server.pong = love.timer.getTime()
-	elseif data == "SPAM_TEST" then network.spamTest(50)
-	elseif string.find(data, "Broadcast:") then game.broadcast.func(data)
-	elseif string.find(data, "Players:") then print("Drawing other players...")
+	local response
+	
+	data = jLib.destringify(data)
+	
+	--Responses
+	if     data.id == "PONG"      then server.pong = love.timer.getTime()
+	elseif data.id == "BROADCAST" then game.broadcast.func(data.message)
+	elseif data.id == "PLAYERS"   then game.updatePlayers(data.clients)
+	else   print("No response for " .. data.id)
 	end
-	return data
-end
-
-function network.spamTest(amt)
-	local index = 0
-	while index < amt do
-		network.send(jLib.stringify({id = "SPAM", data = tostring(index)}))
-		index = index + 1
+	
+	--Console logs (All of this can be commented out with no impact)
+	if data.id == "PONG" then print("Pong!")
 	end
+	
+	return response
 end

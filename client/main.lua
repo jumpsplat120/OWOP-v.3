@@ -27,8 +27,8 @@ function love.draw()
 end
 
 function love.update(dt)
-	local data = network.update(dt)
-	if data then print(data) end
+	local response = network.update(dt)
+	if response then print(response) end
 	game.update(dt)
 	jLib.update(dt)
 end
