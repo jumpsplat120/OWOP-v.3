@@ -287,6 +287,7 @@ function game.resize.update()
 		friends.regular.y = friendsCalc
 		friends.hover.y   = friendsCalc
 		friends.click.y   = friendsCalc
+		
 	elseif game.state == "INGAME" then
 		if game.modal == "ESC_MENU" then
 			local modal    = game.escapeModal
@@ -338,7 +339,7 @@ function game.resize.update()
 			escape.click.y   = escapeCalc
 		end
 	elseif game.state == "SETTINGS" then
-		settings.colorPicker.update(1 * game.scale)
+		settings.colorPicker.update(game.scale)
 	end
 	
 end
