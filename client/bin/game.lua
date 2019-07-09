@@ -150,6 +150,7 @@ function game.draw()
 			game.player:draw()
 			camera:setPosition(game.player.x - (jLib.window.width / 2), game.player.y - (jLib.window.height / 2))
 		camera:unset()
+		for i = 1, #otherPlayers, 1 do otherPlayers[i].player:draw() end
 	elseif game.state == "FRIENDS_MENU" then
 		love.graphics.setColor(jLib.color.black)
 		love.graphics.print("friends menu")
@@ -220,8 +221,10 @@ function game.update(dt)
 													uuid  = game.player.uuid,
 													x     = game.player.x,
 													y     = game.player.y,
+													rot   = game.player.rot,
 													color = game.player.color,
-													chat  = game.player.chat }}
+													chat  = game.player.chat,
+													state = game.state}}
 							
 		network.send(jLib.stringify(data))
 		
@@ -250,12 +253,21 @@ function game.updatePlayers(clients)
 	--IF JUST YOU, RETURN
 	if #clients <= 1 then return end
 	
+	--START AT -1 SO AS TO NOT INCLUDE YOURSELF
+	local playing = -1
+
+	for i = 1, #clients, 1 do if clients[i].state == "INGAME" then playing = playing + 1 end end
+	
+	--THE FIRST LOOP NEEDS TO UPDATE THE STATE
+	if playing < 0 then return end
 	
 	--STEP 1: MAKE SURE ALL PLAYERS EXIST LOCALLY
-	while not (#clients - 1 == #otherPlayers) do
+	while not (playing == #otherPlayers) do
 		
+		print("There are more people playing than you have saved locally!")
 		--SOMEONE DISCONNECTED
-		if #otherPlayers > #clients - 1 then
+		if #otherPlayers > playing then
+			print("Someone has disconnected...")
 			for x = 1, #otherPlayers, 1 do
 			local success
 				for z = 1, #clients, 1 do
@@ -281,14 +293,16 @@ function game.updatePlayers(clients)
 		end
 		
 		--SOMEONE JOINED
-		if #otherPlayers < #clients - 1 then
-			print(#otherPlayers, #clients - 1)
+		if #otherPlayers < playing then
+			print("Someone has connected...")
 			--ADD ALL OTHER PLAYERS TO OTHER PLAYERS TABLE
 			if #otherPlayers == 0 then
-				print("No players saved locally, adding all players to local...")
+				print("Zero players are saved locally, adding all players to local...")
 				for i = 1, #clients, 1 do
 					if clients[i].uuid == game.player.uuid then --SKIP SELF 
-					else otherPlayers[#otherPlayers + 1] = clients[i]
+					else
+						local data = clients[i]
+						otherPlayers[#otherPlayers + 1] = {player = Character(data.color, data.name, game.scale, data.x, data.y, data.rot, data.chat, data.uuid)}
 					end
 				end
 				return
@@ -319,8 +333,19 @@ function game.updatePlayers(clients)
 	
 	--STEP 2: UPDATE ALL PLAYERS ON YOUR SCREEN
 	for i = 1, #clients, 1 do
-		--FOR ALL PLAYERS WHO ARE NOT YOU
-		if not (clients[i].uuid == game.player.uuid) then
+		if clients[i].uuid == game.player.uuid then
+			--SKIP YOURSELF
+		else
+			for z = 1, #otherPlayers, 1 do
+				if otherPlayers[z].uuid == clients[i].uuid then
+					otherPlayers[z].x     = clients[i].x
+					otherPlayers[z].y     = clients[i].y
+					otherPlayers[z].name  = clients[i].name
+					otherPlayers[z].rot   = clients[i].rot
+					otherPlayers[z].color = clients[i].color
+					otherPlayers[z].chat  = clients[i].chat
+				end
+			end
 		end
 	end
 end

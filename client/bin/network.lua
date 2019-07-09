@@ -32,7 +32,8 @@ function network.load()
 																				x     = game.player.x,
 																				y     = game.player.y,
 																				color = game.player.color,
-																				chat  = game.player.chat }}))
+																				chat  = game.player.chat,
+																				state = game.state}}))
 	if err then error(err) end
 	local data = server.udp:receive()
 	game.timer = love.timer.getTime()

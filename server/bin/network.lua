@@ -70,9 +70,11 @@ function network.newClient(address, port, data)
 											info  = {   name  = data.name,
 														x     = 0,
 														y     = 0,
+														rot   = data.rot,
 														color = data.color,
 														chat  = "",
-														uuid  = data.uuid}}
+														uuid  = data.uuid,
+														state = data.state}}
 	
 	con.print("Client connected!")
 														
@@ -87,9 +89,11 @@ function network.updateClient(address, port, data)
 			server.clients[i].info.name  = data.name
 			server.clients[i].info.x     = data.x
 			server.clients[i].info.y     = data.y
+			server.clients[i].info.rot   = data.rot
 			server.clients[i].info.color = data.color
 			server.clients[i].info.chat  = data.chat
 			server.clients[i].info.uuid  = data.uuid
+			server.clients[i].info.state = data.state
 			
 			local clients = {}
 			for i = 1, #server.clients, 1 do clients[i] = server.clients[i].info end

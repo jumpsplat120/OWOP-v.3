@@ -21,7 +21,7 @@ local function getUUID()
 	return uuid
 end
 
-function Character:new(color, name, scale, x, y, rot, chat)
+function Character:new(color, name, scale, x, y, rot, chat, uuid)
 	self.x     = x     or 0
 	self.y     = y     or 0
 	self.rot   = rot   or 0
@@ -29,8 +29,8 @@ function Character:new(color, name, scale, x, y, rot, chat)
 	self.name  = name  or "Player" .. tostring(math.random(0,1000))
 	self.scale = scale or 1
 	self.chat  = chat  or ""
+	self.uuid  = uuid or getUUID()
 	
-	self.uuid   = getUUID()
 	self.size   = 50
 	self.canvas = love.graphics.newCanvas(self.size * self.scale * 2, self.size * self.scale * 2)
 	
