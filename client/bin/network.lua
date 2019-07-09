@@ -27,7 +27,12 @@ end
 
 function network.load()
 	print("Connecting to " .. server.address.ip .. ":" .. server.address.port)
-	local _, err = server.udp:send(jLib.stringify({id = "REQ_CONNECT", data = "Requesting connection..."}))
+	local _, err = server.udp:send(jLib.stringify({id = "REQ_CONNECT", data = { name  = game.player.name,
+																				uuid  = game.player.uuid,
+																				x     = game.player.x,
+																				y     = game.player.y,
+																				color = game.player.color,
+																				chat  = game.player.chat }}))
 	if err then error(err) end
 	local data = server.udp:receive()
 	game.timer = love.timer.getTime()
@@ -73,14 +78,16 @@ function network.response(data)
 	data = jLib.destringify(data)
 	
 	--Responses
-	if     data.id == "PONG"      then server.pong = love.timer.getTime()
-	elseif data.id == "BROADCAST" then game.broadcast.func(data.message)
-	elseif data.id == "PLAYERS"   then game.updatePlayers(data.clients)
+	if     data.id == "PONG"           then server.pong = love.timer.getTime()
+	elseif data.id == "BROADCAST"      then game.broadcast.func(data.message)
+	elseif data.id == "PLAYERS"        then game.updatePlayers(data.clients)
+	elseif data.id == "CONNECT_STATUS" then game.isConnected = true
 	else   print("No response for " .. data.id)
 	end
 	
 	--Console logs (All of this can be commented out with no impact)
-	if data.id == "PONG" then print("Pong!")
+	if data.id     == "PONG"           then print(data.message)
+	elseif data.id == "CONNECT_STATUS" then print(data.status)
 	end
 	
 	return response

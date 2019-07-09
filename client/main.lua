@@ -12,6 +12,7 @@ Object = require "bin/classic"
 		 require "bin/settings"
 		 require "bin/camera"
 		 require "bin/controls"
+reader = require "bin/inspect" --DEBUG TOOL
 
 --------------MAIN--------------
 

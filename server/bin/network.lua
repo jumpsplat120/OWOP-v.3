@@ -35,8 +35,8 @@ function network.response(data, address, port)
 	data = jLib.destringify(data) or {id = false}
 	
 	if     data.id == "PING"        then response = network.pong(address, port)
-	elseif data.id == "REQ_CONNECT" then response = network.newClient(address, port)
-	elseif data.id == "PLAYER_INFO" then response = network.updateClient(address, port, data)
+	elseif data.id == "REQ_CONNECT" then response = network.newClient(address, port, data.data)
+	elseif data.id == "PLAYER_INFO" then response = network.updateClient(address, port, data.data)
 	elseif data.id then con.print("[ERROR] Missing response for ID: " .. data.id)
 	end
 	
@@ -58,24 +58,25 @@ function network.pong(address, port)
 	
 	con.print("Pong sent back!")
 	
-	return jLib.stringify({id = "PONG", data = "Pong!"})
+	return jLib.stringify({id = "PONG", message = "Pong!"})
 end
 
-function network.newClient(address, port)
+function network.newClient(address, port, data)
 	con.print("Connection request recieved from", address, port)
 	
 	server.clients[#server.clients + 1] = { ip    = address,
 											port  = port,
 											timer = love.timer.getTime(),
-											info  = {   name  = "DEFAULT",
+											info  = {   name  = data.name,
 														x     = 0,
 														y     = 0,
-														color = jLib.color.black,
-														chat  = "" }}
+														color = data.color,
+														chat  = "",
+														uuid  = data.uuid}}
+	
+	con.print("Client connected!")
 														
-	con.print("Client connected!")													
-														
-	return jLib.stringify({id = "CONNECT_STATUS", data = "Connected!"})
+	return jLib.stringify({id = "CONNECT_STATUS", status = "Connected!"})
 end
 
 function network.updateClient(address, port, data)
@@ -88,8 +89,11 @@ function network.updateClient(address, port, data)
 			server.clients[i].info.y     = data.y
 			server.clients[i].info.color = data.color
 			server.clients[i].info.chat  = data.chat
+			server.clients[i].info.uuid  = data.uuid
 			
-			return jLib.stringify({id = "PLAYERS", clients = server.clients})
+			local clients = {}
+			for i = 1, #server.clients, 1 do clients[i] = server.clients[i].info end
+			return jLib.stringify({id = "PLAYERS", clients = clients})
 		end
 	end
 end

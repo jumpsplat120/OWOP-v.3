@@ -6,7 +6,7 @@ local function getUUID()
 	local uuid = ""
 	
 	--UUID TEMPLATE: xxxxxx-xxxx-xxxxxx
-	for i = 1, 16, 1 do uuidTable[i] = alphanumeric(math.random(1, #alphanumeric)) end
+	for i = 1, 16, 1 do uuidTable[i] = alphanumeric[math.random(1, #alphanumeric)] end
 	
 	for i = 1, 6, 1 do uuid = uuid .. uuidTable[i] end
 	
@@ -17,7 +17,7 @@ local function getUUID()
 	uuid = uuid .. "-"
 	
 	for i = 10, 16, 1 do uuid = uuid .. uuidTable[i] end
-	
+
 	return uuid
 end
 
@@ -30,9 +30,7 @@ function Character:new(color, name, scale, x, y, rot, chat)
 	self.scale = scale or 1
 	self.chat  = chat  or ""
 	
-	--THIS SHOULD NEVER BE CHANGED
-	self.UUID   = getUUID()
-	
+	self.uuid   = getUUID()
 	self.size   = 50
 	self.canvas = love.graphics.newCanvas(self.size * self.scale * 2, self.size * self.scale * 2)
 	

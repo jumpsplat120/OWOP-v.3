@@ -31,8 +31,8 @@ function controls.setDefault()
 	controls.isMouse[2]    = "context"
 end
 
-function controls.updateSave(save)
-	controls.setDefault()
+function controls.loadSave(save)
+	print("Loading saved controls...")
 	
 	controls.forward.key   = save.forward.key
 	controls.backwards.key = save.backwards.key

@@ -29,11 +29,11 @@ function game.load()
 	
 	--------------Load Controls--------------
 	
-	if data.controls then controls.updateSave(data.controls) else controls.setDefault() end
+	if data.controls then controls.loadSave(data.controls) else controls.setDefault() end
 	
 	--------------Create Player From Save--------------
 	
-	print("Character created!" .. " color: " .. "R: " .. data.color[1] ..  " G: " .. data.color[2] .. " B: " .. data.color[3] .. ", name: " .. data.name .. ", scale: " .. data.scale)
+	print("Character created!" .. " color: " .. "R: " .. data.color[1] ..  " G: " .. data.color[2] .. " B: " .. data.color[3] .. ", name: " .. data.name .. ", uuid: " .. data.uuid .. " scale: " .. data.scale)
 	game.player     = Character(data.color, data.name, data.scale, 0, 0)
 	game.loadPlayer = Character(data.color, "load", 1, jLib.window.width / 2, jLib.window.height / 2)
 	
@@ -207,6 +207,7 @@ function game.update(dt)
 		game.player.color[2] = color[2] or game.player.color[2]
 		game.player.color[3] = color[3] or game.player.color[3]
 		
+		
 	elseif game.state == "LOAD_SCREEN" then
 		game.loadPlayer.rot = game.loadPlayer.rot + dt
 		game.loadPlayer.scale = jLib.map(-1,1,.75,1.5,math.sin(game.loadPlayer.rot)) * game.scale
@@ -215,12 +216,12 @@ function game.update(dt)
 	elseif game.state == "INGAME" then
 		game.player:update(dt)
 		
-		local data = {  id    = "PLAYER_INFO",
-						name  = game.player.name,
-						x     = game.player.x,
-						y     = game.player.y,
-						color = jLib.stringify(game.player.color),
-						chat  = game.player.chat }
+		local data = { id = "PLAYER_INFO", data = { name  = game.player.name,
+													uuid  = game.player.uuid,
+													x     = game.player.x,
+													y     = game.player.y,
+													color = game.player.color,
+													chat  = game.player.chat }}
 							
 		network.send(jLib.stringify(data))
 		
@@ -246,22 +247,80 @@ function game.update(dt)
 end
 
 function game.updatePlayers(clients)
+	--IF JUST YOU, RETURN
 	if #clients <= 1 then return end
 	
-	for i = 1, #clients, 1 do
-		if (clients[i].ip == network.ip) and (clients[i].port == network.port) then
-			--Skip yourself!
-		else
-			--IF AMOUNT OF CONNECTED CLIENTS ISN'T THE SAME AS THE AMOUNT OF LOCALLY SAVED PLAYERS
-			while not (#clients == #otherPlayers) do
-				if     #otherPlayers > #clients do
-					for x = 1, #otherPlayers, 1 do
-						if otherPlayers[x].ip == clients[i].ip and otherPlayers[x].port
-						end
+	
+	--STEP 1: MAKE SURE ALL PLAYERS EXIST LOCALLY
+	while not (#clients - 1 == #otherPlayers) do
+		
+		--SOMEONE DISCONNECTED
+		if #otherPlayers > #clients - 1 then
+			for x = 1, #otherPlayers, 1 do
+			local success
+				for z = 1, #clients, 1 do
+					--BREAK IF CLIENTS IS YOU
+					if clients[z].uuid == game.player.uuid then
+						success = true
+						break
 					end
-				elseif #otherPlayers < #clients do
+					
+					--BREAK IF MATCH IF CLIENT STILL EXISTS ON SERVER AND LOCALLY
+					if otherPlayers[x].uuid == clients[z].uuid then 
+						success = true
+						break
+					end
+				end
+				
+				--THE Z INDEXED CLIENT IS THE MISSING ONE
+				if not success then
+					print(otherPlayers[x].name .. " has disconnected!")
+					otherPlayers[x] = nil
 				end
 			end
+		end
+		
+		--SOMEONE JOINED
+		if #otherPlayers < #clients - 1 then
+			print(#otherPlayers, #clients - 1)
+			--ADD ALL OTHER PLAYERS TO OTHER PLAYERS TABLE
+			if #otherPlayers == 0 then
+				print("No players saved locally, adding all players to local...")
+				for i = 1, #clients, 1 do
+					if clients[i].uuid == game.player.uuid then --SKIP SELF 
+					else otherPlayers[#otherPlayers + 1] = clients[i]
+					end
+				end
+				return
+			end
+			
+			--FIND PLAYER 
+			for x = 1, #clients, 1 do
+			
+			local success
+				for z = 1, #otherPlayers, 1 do
+					--WHEN MATCH IS FOUND, BREAK FIRST LOOP EARLY
+					print(otherPlayers[z].uuid, clients[x].uuid)
+					if otherPlayers[z].uuid == clients[x].uuid then 
+						matched = true
+						print("Found match! Breaking from loop")
+						break
+					end
+				end
+				
+				--IF NO MATCH IS FOUND, THEN CLIENT[X] IS THE MISSING PLAYER
+				if not matched then
+					print(clients[x].name .. " has joined!")
+					otherPlayers[#otherPlayers + 1] = clients[x]
+				end
+			end
+		end
+	end
+	
+	--STEP 2: UPDATE ALL PLAYERS ON YOUR SCREEN
+	for i = 1, #clients, 1 do
+		--FOR ALL PLAYERS WHO ARE NOT YOU
+		if not (clients[i].uuid == game.player.uuid) then
 		end
 	end
 end
@@ -384,9 +443,12 @@ function game.resize.update()
 end
 
 function game.connect()
+	if game.isConnected then return end
+	
 	if not game.isConnected then
 		local waitTime = 10
-		local timer = love.timer.getTime()		
+		local timer = love.timer.getTime()
+		
 		if timer > game.timer + waitTime then 
 			jLib.error("We were unable to connect you to the game servers! You might be having trouble with your internet, or we might be having difficulty on our side. Please try again in a few minutes. If you're still getting this error, please send this error code to the developer: LOADTIMEOUT") 
 			return
@@ -396,24 +458,36 @@ function game.connect()
 		if data then 
 			game.isConnected, game.state = true, "START_MENU"
 		end
+	else game.state = "START_MENU"
 	end
 end
 
 function game.updateSave()	
 	game.save = {
 		color = game.player.color,
-		name = game.player.name,
+		name  = game.player.name,
 		scale = game.player.scale,
+		uuid  = game.player.uuid,
 		x, y, rot = 0, 0, 0,
 		current_text = "",
-		controls = { forward   = { key = controls.forward.key,   isPressed = false },
-					 backwards = { key = controls.backwards.key, isPressed = false },
-					 left      = { key = controls.left.key,      isPressed = false },
-					 right     = { key = controls.right.key,     isPressed = false },
-					 escape    = { key = controls.escape.key,    isPressed = false },
-					 action    = { key = controls.action.key,    isPressed = false },
-		 			 context   = { key = controls.context.key,   isPressed = false }}
+		controls = { forward   = { key = controls.forward.key,   isPressed = false, isReleased = true },
+					 backwards = { key = controls.backwards.key, isPressed = false, isReleased = true },
+					 left      = { key = controls.left.key,      isPressed = false, isReleased = true },
+					 right     = { key = controls.right.key,     isPressed = false, isReleased = true },
+					 escape    = { key = controls.escape.key,    isPressed = false, isReleased = true },
+					 action    = { key = controls.action.key,    isPressed = false, isReleased = true },
+		 			 context   = { key = controls.context.key,   isPressed = false, isReleased = true },
+					 isMouse   = {}}
 	}
+	
+	for k, v in pairs(game.save.controls) do
+		local key = game.save.controls[k].key
+	
+		if (key == "lclick") or (key == "rclick") or (key == "mclick") then game.save.controls.isMouse[#game.save.controls.isMouse + 1] = tostring(k) end
+	end
+	
+	print(controls.escape.key)
+	print(game.save.controls.escape.key)
 	
 	local save = jLib.stringify(game.save)
 	success, err = love.filesystem.write("player", save)

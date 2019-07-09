@@ -89,6 +89,7 @@ function love.keypressed(key)
 end
 
 ----------Call on Any Keyboard Release----------
+
 function love.keyreleased(key)
 	if     key == controls.forward.key   then controls.forward.isPressed   = false
 	elseif key == controls.backwards.key then controls.backwards.isPressed = false
