@@ -150,7 +150,9 @@ function game.draw()
 			game.player:draw()
 			camera:setPosition(game.player.x - (jLib.window.width / 2), game.player.y - (jLib.window.height / 2))
 		camera:unset()
-		for i = 1, #otherPlayers, 1 do otherPlayers[i].player:draw() end
+		for i = 1, #otherPlayers, 1 do
+			print("drawing player at " ..otherPlayers[i].player.x .. otherPlayers[i].player.y)
+			otherPlayers[i].player:draw() end
 	elseif game.state == "FRIENDS_MENU" then
 		love.graphics.setColor(jLib.color.black)
 		love.graphics.print("friends menu")
@@ -338,12 +340,12 @@ function game.updatePlayers(clients)
 		else
 			for z = 1, #otherPlayers, 1 do
 				if otherPlayers[z].uuid == clients[i].uuid then
-					otherPlayers[z].x     = clients[i].x
-					otherPlayers[z].y     = clients[i].y
-					otherPlayers[z].name  = clients[i].name
-					otherPlayers[z].rot   = clients[i].rot
-					otherPlayers[z].color = clients[i].color
-					otherPlayers[z].chat  = clients[i].chat
+					otherPlayers[z].player.x     = clients[i].x
+					otherPlayers[z].player.y     = clients[i].y
+					otherPlayers[z].player.name  = clients[i].name
+					otherPlayers[z].player.rot   = clients[i].rot
+					otherPlayers[z].player.color = clients[i].color
+					otherPlayers[z].player.chat  = clients[i].chat
 				end
 			end
 		end
@@ -510,9 +512,6 @@ function game.updateSave()
 	
 		if (key == "lclick") or (key == "rclick") or (key == "mclick") then game.save.controls.isMouse[#game.save.controls.isMouse + 1] = tostring(k) end
 	end
-	
-	print(controls.escape.key)
-	print(game.save.controls.escape.key)
 	
 	local save = jLib.stringify(game.save)
 	success, err = love.filesystem.write("player", save)
