@@ -24,12 +24,12 @@ Requires in same folder as jLib... bitser.lua
 --]]
 
 jLib = {
-	isError = false,
+	isError      = false,
 	errorMessage = "",
-	window = {},
-	color = {},
-	printf = {} ,
-	mouse = {}
+	window       = {},
+	color        = {},
+	printf       = {} ,
+	mouse        = {}
 }
 
 jLib.window.width, jLib.window.height, jLib.window.flags = love.window.getMode()

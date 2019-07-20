@@ -146,10 +146,10 @@ function game.draw()
 		love.graphics.printf("Loading...", game.font, (jLib.window.width / 2) - ((game.font:getWidth("Loading...") * size) / 2), 5, jLib.window.width / size, "left", 0, size)
 		game.loadPlayer:draw()
 	elseif game.state == "INGAME" then
-		camera:set()
+		--camera:set()
 			game.player:draw()
 			camera:setPosition(game.player.x - (jLib.window.width / 2), game.player.y - (jLib.window.height / 2))
-		camera:unset()
+		--camera:unset()
 		for i = 1, #otherPlayers, 1 do
 			print("drawing player at " ..otherPlayers[i].player.x .. otherPlayers[i].player.y)
 			otherPlayers[i].player:draw() end
