@@ -19,7 +19,7 @@ version will always be on Github. If you got this
 from anywhere else it may not be the most updated
 version.
 
-Requires in same folder as jLib... bitser.lua
+Requires in same folder as jLib...  bitser.lua
 
 --]]
 
@@ -28,9 +28,8 @@ jLib = {
 	errorMessage = "",
 	window       = {},
 	color        = {},
-	printf       = {} ,
-	mouse        = {}
-}
+	mouse        = {},
+	printf        = {}}
 
 jLib.window.width, jLib.window.height, jLib.window.flags = love.window.getMode()
 
@@ -46,13 +45,13 @@ jLib.color.yellow     = {1,1,0,1}    --#FFFF00
 jLib.color.magenta    = {1,0,1,1}    --#FF00FF
 jLib.color.light_blue = {0,1,1,1}    --#00FFFF
 
-jLib.printf.nowrap    = math.huge    --inf
+jLib.printf.nowrap = math.huge    --inf
 
-jLib.mouse.x          = love.mouse.getX()
-jLib.mouse.y          = love.mouse.getY()
-jLib.mouse.w          = 1
-jLib.mouse.h          = 1
-jLib.mouse.r          = 1
+jLib.mouse.x = love.mouse.getX()
+jLib.mouse.y = love.mouse.getY()
+jLib.mouse.w = 1
+jLib.mouse.h = 1
+jLib.mouse.r = 1
 
 -----------------------------FUNCTIONS-----------------------------
 
