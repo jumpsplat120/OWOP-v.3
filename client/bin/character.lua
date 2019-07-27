@@ -29,7 +29,7 @@ function Character:new(color, name, scale, x, y, rot, chat, uuid)
 	self.name  = name  or "Player" .. tostring(math.random(0,1000))
 	self.scale = scale or 1
 	self.chat  = chat  or ""
-	self.uuid  = uuid or getUUID()
+	self.uuid  = uuid  or getUUID()
 	
 	self.size   = 50
 	self.canvas = love.graphics.newCanvas(self.size * self.scale * 2, self.size * self.scale * 2)
